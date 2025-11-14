@@ -17,9 +17,9 @@ export function Sidebar({ isCollapsed }: ToggleSidebar) {
             isCollapsed ? "w-20 px-2" : "w-64 px-4"
         )}>
             <div className="flex flex-col justify-center items-center mt-5">
-                <Image src={"/images/logo2.jpg"} alt="Logo" width={50} height={50} className="w-[80%] h-auto"></Image>
+                <Image src={"/images/OIP.jpg"} alt="Logo" width={50} height={50} className="w-[80%] h-auto"></Image>
                 <h2 className={clsx("text-xl mt-2", isCollapsed && "hidden")}>
-                    News Anime
+                    Tin tức 24h công nghệ
                 </h2>
             </div>
             {
