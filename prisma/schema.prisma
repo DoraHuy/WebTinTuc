@@ -1,0 +1,156 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model TaiKhoan {
+  id           Int     @id @default(autoincrement())
+  taiKhoan     String  @unique
+  matKhau      String
+  accessToken  String?
+  refreshToken String?
+
+  nguoiDung NguoiDungs? @relation("UserAccount")
+}
+
+model NguoiDungs {
+  id           Int     @id @default(autoincrement())
+  tenNguoiDung String
+  email        String  @unique
+  SDT          String?
+  biDanh       String?
+  diaChi       String?
+  gioiTinh     String?
+
+  tk              String            @unique
+  tkNguoiDung     TaiKhoan          @relation("UserAccount", fields: [tk], references: [taiKhoan])
+  nguoiDungVaiTro NguoiDungVaiTro[]
+  tinTuc          TinTucs[]
+  binhLuan        BinhLuans[]
+  khoTin          KhoLuuTin[]
+
+  @@map("nguoidungs")
+}
+
+model NguoiDungVaiTro {
+  ngayNhan    DateTime
+  trangThai   Boolean
+  ngayHuy     DateTime?
+  maNguoiDung Int
+  maVaiTro    Int
+  nguoiDung   NguoiDungs @relation(fields: [maNguoiDung], references: [id])
+  vaiTro      VaiTros    @relation(fields: [maVaiTro], references: [id])
+
+  @@id([maNguoiDung, maVaiTro])
+}
+
+model VaiTros {
+  id              Int               @id @default(autoincrement())
+  tenVaiTro       String            @unique
+  moTaVaiTro      String?
+  permissions     VaiTroPermision[]
+  nguoiDungVaiTro NguoiDungVaiTro[]
+}
+
+model Permisions {
+  id           Int               @id @default(autoincrement())
+  tenPermision String            @unique
+  moTa         String?
+  vaiTros      VaiTroPermision[]
+}
+
+model VaiTroPermision {
+  maVaiTro    Int
+  maPermision Int
+  ngayNhan    DateTime
+  trangThai   Boolean
+  ngayHuy     DateTime?
+
+  vaiTro    VaiTros    @relation(fields: [maVaiTro], references: [id])
+  permision Permisions @relation(fields: [maPermision], references: [id])
+
+  @@id([maVaiTro, maPermision])
+}
+
+model DanhMucs {
+  id              Int        @id @default(autoincrement())
+  tenDanhMuc      String     @unique
+  moTaDanhMuc     String?
+  thoiGianTao     DateTime   @default(now())
+  thoiGianCapNhat DateTime?
+  parentId        Int?
+  parent          DanhMucs?  @relation("DanhMucCon", fields: [parentId], references: [id])
+  children        DanhMucs[] @relation("DanhMucCon")
+  tinTuc          TinTucs[]
+
+  @@map("danhmucs")
+}
+
+model KhoLuuTin {
+  id           Int        @id
+  thoiGianTao  DateTime
+  tenKhoLuuTru String     @unique
+  moTaKho      String?
+  idNguoiDung  Int
+  nguoiDung    NguoiDungs @relation(fields: [idNguoiDung], references: [id])
+  tinTuc       TinTucs[]
+}
+
+model TinTucs {
+  id               Int         @id @default(autoincrement())
+  tenTinTuc        String
+  noiDungTinTuc    String      @db.LongText
+  thoiGianDang     DateTime    @default(now())
+  trangThaiDuyet   Boolean?
+  ngayDang         DateTime    @default(now())
+  thoiGianChinhSua DateTime?
+  tomTat           String?     @db.MediumText
+  maNguoiDung      Int
+  nguoiDung        NguoiDungs  @relation(fields: [maNguoiDung], references: [id])
+  danhMuc          DanhMucs[]
+  binhLuan         BinhLuans[]
+  tags             Tags[]
+  khoLuuTin        KhoLuuTin[]
+}
+
+model BinhLuans {
+  id               Int         @id @default(autoincrement())
+  noiDungBinhLuan  String      @db.LongText
+  tenNguoiBinhLuan String?
+  trangThaiAnDanh  Boolean     @default(false)
+  ngayBinhLuan     DateTime    @default(now())
+  ngayChinhSua     DateTime?
+  parentID         Int?
+  parent           BinhLuans?  @relation("BinhLuanCon", fields: [parentID], references: [id])
+  binhLuan         BinhLuans[] @relation("BinhLuanCon")
+  maNguoiDung      Int
+  nguoiDung        NguoiDungs  @relation(fields: [maNguoiDung], references: [id])
+  maTinTuc         Int
+  tinTuc           TinTucs     @relation(fields: [maTinTuc], references: [id])
+}
+
+model HinhAnhVideos {
+  id       Int      @id @default(autoincrement())
+  url      String   @unique @db.VarChar(255)
+  type     String
+  mimeType String?
+  size     Int
+  ngayTao  DateTime @default(now())
+}
+
+model Tags {
+  id     Int       @id @default(autoincrement())
+  tenTag String
+  tinTuc TinTucs[]
+}
