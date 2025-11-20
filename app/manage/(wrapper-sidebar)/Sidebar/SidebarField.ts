@@ -8,7 +8,6 @@ import {
     Settings,
     type LucideIcon
 } from 'lucide-react';
-
 export interface SidebarItem {
     href: string;
     label: string;
