@@ -14,6 +14,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model TaiKhoan {
   id           Int     @id @default(autoincrement())
   taiKhoan     String  @unique

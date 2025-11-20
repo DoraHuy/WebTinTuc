@@ -1,0 +1,249 @@
+{
+  "vaiTros": [
+    {
+      "tenVaiTro": "Admin",
+      "moTaVaiTro": "Quản trị viên hệ thống"
+    },
+    {
+      "tenVaiTro": "Editor",
+      "moTaVaiTro": "Biên tập viên"
+    },
+    {
+      "tenVaiTro": "Author",
+      "moTaVaiTro": "Tác giả"
+    },
+    {
+      "tenVaiTro": "User",
+      "moTaVaiTro": "Người dùng thường"
+    }
+  ],
+  "permissions": [
+    {
+      "tenPermision": "create_post",
+      "moTa": "Tạo bài viết mới"
+    },
+    {
+      "tenPermision": "edit_post",
+      "moTa": "Chỉnh sửa bài viết"
+    },
+    {
+      "tenPermision": "delete_post",
+      "moTa": "Xóa bài viết"
+    },
+    {
+      "tenPermision": "approve_post",
+      "moTa": "Duyệt bài viết"
+    },
+    {
+      "tenPermision": "manage_users",
+      "moTa": "Quản lý người dùng"
+    },
+    {
+      "tenPermision": "manage_categories",
+      "moTa": "Quản lý danh mục"
+    }
+  ],
+  "danhMucs": [
+    {
+      "tenDanhMuc": "Thời sự",
+      "moTaDanhMuc": "Tin tức thời sự trong nước và quốc tế",
+      "children": [
+        {
+          "tenDanhMuc": "Chính trị",
+          "moTaDanhMuc": "Tin tức chính trị"
+        },
+        {
+          "tenDanhMuc": "Xã hội",
+          "moTaDanhMuc": "Tin tức xã hội"
+        }
+      ]
+    },
+    {
+      "tenDanhMuc": "Kinh tế",
+      "moTaDanhMuc": "Tin tức kinh tế, tài chính",
+      "children": [
+        {
+          "tenDanhMuc": "Thị trường",
+          "moTaDanhMuc": "Thông tin thị trường"
+        },
+        {
+          "tenDanhMuc": "Doanh nghiệp",
+          "moTaDanhMuc": "Tin tức doanh nghiệp"
+        }
+      ]
+    },
+    {
+      "tenDanhMuc": "Công nghệ",
+      "moTaDanhMuc": "Tin tức công nghệ thông tin",
+      "children": [
+        {
+          "tenDanhMuc": "AI",
+          "moTaDanhMuc": "Trí tuệ nhân tạo"
+        },
+        {
+          "tenDanhMuc": "Smartphone",
+          "moTaDanhMuc": "Điện thoại thông minh"
+        },
+        {
+          "tenDanhMuc": "Laptop",
+          "moTaDanhMuc": "Máy tính xách tay"
+        }
+      ]
+    },
+    {
+      "tenDanhMuc": "Thể thao",
+      "moTaDanhMuc": "Tin tức thể thao",
+      "children": [
+        {
+          "tenDanhMuc": "Bóng đá",
+          "moTaDanhMuc": "Tin tức bóng đá"
+        },
+        {
+          "tenDanhMuc": "Tennis",
+          "moTaDanhMuc": "Tin tức quần vợt"
+        }
+      ]
+    },
+    {
+      "tenDanhMuc": "Giải trí",
+      "moTaDanhMuc": "Tin tức giải trí, showbiz",
+      "children": [
+        {
+          "tenDanhMuc": "Phim ảnh",
+          "moTaDanhMuc": "Tin tức điện ảnh"
+        },
+        {
+          "tenDanhMuc": "Âm nhạc",
+          "moTaDanhMuc": "Tin tức âm nhạc"
+        }
+      ]
+    },
+    {
+      "tenDanhMuc": "Du lịch",
+      "moTaDanhMuc": "Tin tức du lịch"
+    },
+    {
+      "tenDanhMuc": "Giáo dục",
+      "moTaDanhMuc": "Tin tức giáo dục"
+    },
+    {
+      "tenDanhMuc": "Sức khỏe",
+      "moTaDanhMuc": "Tin tức sức khỏe"
+    }
+  ],
+  "taiKhoans": [
+    {
+      "taiKhoan": "admin",
+      "matKhau": "admin123",
+      "nguoiDung": {
+        "tenNguoiDung": "Quản trị viên",
+        "email": "admin@webtintuc.com",
+        "SDT": "0123456789",
+        "diaChi": "Hà Nội",
+        "gioiTinh": "Nam"
+      },
+      "vaiTro": "Admin"
+    },
+    {
+      "taiKhoan": "editor1",
+      "matKhau": "editor123",
+      "nguoiDung": {
+        "tenNguoiDung": "Nguyễn Văn A",
+        "email": "editor1@webtintuc.com",
+        "SDT": "0987654321",
+        "diaChi": "Hồ Chí Minh",
+        "gioiTinh": "Nam"
+      },
+      "vaiTro": "Editor"
+    },
+    {
+      "taiKhoan": "author1",
+      "matKhau": "author123",
+      "nguoiDung": {
+        "tenNguoiDung": "Trần Thị B",
+        "email": "author1@webtintuc.com",
+        "SDT": "0369852147",
+        "diaChi": "Đà Nẵng",
+        "gioiTinh": "Nữ"
+      },
+      "vaiTro": "Author"
+    },
+    {
+      "taiKhoan": "user1",
+      "matKhau": "user123",
+      "nguoiDung": {
+        "tenNguoiDung": "Lê Văn C",
+        "email": "user1@webtintuc.com",
+        "SDT": "0147258369",
+        "gioiTinh": "Nam"
+      },
+      "vaiTro": "User"
+    }
+  ],
+  "tags": [
+    { "tenTag": "hot" },
+    { "tenTag": "mới nhất" },
+    { "tenTag": "nổi bật" },
+    { "tenTag": "trending" },
+    { "tenTag": "video" },
+    { "tenTag": "infographic" },
+    { "tenTag": "tin nhanh" },
+    { "tenTag": "độc quyền" }
+  ],
+  "tinTucs": [
+    {
+      "tenTinTuc": "Công nghệ AI đang thay đổi cuộc sống con người",
+      "tomTat": "Trí tuệ nhân tạo đang có những bước tiến vượt bậc và ảnh hưởng sâu rộng đến mọi lĩnh vực của đời sống.",
+      "noiDungTinTuc": "<h2>AI - Cuộc cách mạng công nghệ thế kỷ 21</h2><p>Trí tuệ nhân tạo (AI) không còn là khái niệm xa lạ mà đã trở thành một phần không thể thiếu trong cuộc sống hiện đại. Từ việc hỗ trợ chẩn đoán y tế, tự động hóa sản xuất, đến các ứng dụng trong giáo dục và giải trí, AI đang mở ra những khả năng vô tận.</p><p>Các chuyên gia dự đoán rằng trong 5-10 năm tới, AI sẽ thay đổi hoàn toàn cách chúng ta làm việc và sinh hoạt. Những công nghệ như ChatGPT, nhận dạng hình ảnh, xe tự lái là những ví dụ điển hình.</p><p>Tuy nhiên, sự phát triển của AI cũng đặt ra nhiều thách thức về đạo đức, bảo mật và việc làm. Cần có những quy định và chuẩn mực phù hợp để đảm bảo AI phát triển theo hướng có lợi cho nhân loại.</p>",
+      "trangThaiDuyet": true,
+      "author": "author1",
+      "danhMucs": ["Công nghệ", "AI"],
+      "tags": ["hot", "nổi bật", "trending"]
+    },
+    {
+      "tenTinTuc": "Đội tuyển Việt Nam giành chiến thắng ấn tượng",
+      "tomTat": "Với tỷ số 3-1, đội tuyển Việt Nam đã có màn trình diễn xuất sắc trước đối thủ mạnh.",
+      "noiDungTinTuc": "<h2>Chiến thắng xứng đáng</h2><p>Tối qua, đội tuyển Việt Nam đã có trận đấu xuất sắc và giành chiến thắng 3-1 trước đối thủ. Đây là kết quả xứng đáng sau những nỗ lực tập luyện không ngừng nghỉ.</p><p>Các cầu thủ đã thể hiện tinh thần chiến đấu cao và kỹ thuật điêu luyện. HLV đã có những điều chỉnh chiến thuật hợp lý giúp đội nhà áp đảo hoàn toàn.</p><p>Người hâm mộ đã có một đêm vui vẻ và tự hào về đội tuyển quốc gia. Chiến thắng này mở ra cơ hội lớn cho Việt Nam ở vòng sau.</p>",
+      "trangThaiDuyet": true,
+      "author": "editor1",
+      "danhMucs": ["Thể thao", "Bóng đá"],
+      "tags": ["hot", "mới nhất"]
+    },
+    {
+      "tenTinTuc": "Thị trường chứng khoán tăng điểm mạnh trong phiên sáng",
+      "tomTat": "VN-Index tăng gần 20 điểm với thanh khoản cải thiện đáng kể.",
+      "noiDungTinTuc": "<h2>Sắc xanh bao trùm thị trường</h2><p>Phiên giao dịch sáng nay, thị trường chứng khoán Việt Nam ghi nhận mức tăng ấn tượng khi VN-Index tăng gần 20 điểm, lên mức 1.250 điểm.</p><p>Các cổ phiếu ngân hàng, bất động sản và công nghệ đều có sự tăng trưởng tốt. Thanh khoản cải thiện với giá trị giao dịch đạt hơn 15.000 tỷ đồng.</p><p>Các chuyên gia nhận định xu hướng tích cực sẽ tiếp tục trong ngắn hạn nhờ dòng tiền nội và các tin tốt từ kinh tế vĩ mô.</p>",
+      "trangThaiDuyet": true,
+      "author": "editor1",
+      "danhMucs": ["Kinh tế", "Thị trường"],
+      "tags": ["tin nhanh", "mới nhất"]
+    },
+    {
+      "tenTinTuc": "Top 5 địa điểm du lịch hấp dẫn mùa đông này",
+      "tomTat": "Khám phá những điểm đến tuyệt vời cho kỳ nghỉ mùa đông sắp tới.",
+      "noiDungTinTuc": "<h2>Điểm đến lý tưởng mùa đông</h2><p>Mùa đông là thời điểm lý tưởng để du lịch với thời tiết mát mẻ. Dưới đây là 5 địa điểm được đề xuất:</p><ol><li><strong>Sa Pa</strong> - Ngắm tuyết rơi và ruộng bậc thang</li><li><strong>Đà Lạt</strong> - Thành phố ngàn hoa</li><li><strong>Phú Quốc</strong> - Biển đảo nhiệt đới</li><li><strong>Hội An</strong> - Phố cổ thơ mộng</li><li><strong>Ninh Bình</strong> - Vịnh Hạ Long trên cạn</li></ol><p>Mỗi địa điểm đều có nét đẹp riêng, phù hợp với mọi nhu cầu nghỉ dưỡng và khám phá.</p>",
+      "trangThaiDuyet": true,
+      "author": "author1",
+      "danhMucs": ["Du lịch"],
+      "tags": ["nổi bật"]
+    },
+    {
+      "tenTinTuc": "Ra mắt smartphone flagship với chip xử lý mới nhất",
+      "tomTat": "Hãng công nghệ lớn vừa công bố sản phẩm smartphone cao cấp với nhiều tính năng đột phá.",
+      "noiDungTinTuc": "<h2>Công nghệ đỉnh cao</h2><p>Chiếc smartphone mới được trang bị chip xử lý thế hệ mới nhất, RAM 12GB và bộ nhớ trong lên đến 512GB. Màn hình AMOLED 6.8 inch với tần số quét 120Hz mang lại trải nghiệm mượt mà.</p><p>Camera chính 200MP với khả năng zoom quang học 10x, quay video 8K. Pin 5000mAh hỗ trợ sạc nhanh 120W.</p><p>Sản phẩm dự kiến ra mắt thị trường Việt Nam vào tháng sau với mức giá khoảng 25 triệu đồng.</p>",
+      "trangThaiDuyet": true,
+      "author": "author1",
+      "danhMucs": ["Công nghệ", "Smartphone"],
+      "tags": ["mới nhất", "nổi bật"]
+    },
+    {
+      "tenTinTuc": "Bộ phim điện ảnh Việt thu hút hàng triệu lượt xem",
+      "tomTat": "Bộ phim mới ra mắt đã tạo ra cơn sốt và nhận được nhiều đánh giá tích cực.",
+      "noiDungTinTuc": "<h2>Thành công vượt mong đợi</h2><p>Bộ phim điện ảnh Việt Nam vừa ra mắt đã thu hút hơn 5 triệu lượt xem chỉ sau một tuần công chiếu. Câu chuyện cảm động về tình gia đình đã chạm đến trái tim người xem.</p><p>Dàn diễn viên trẻ với diễn xuất tự nhiên, kịch bản chặt chẽ và kỹ xảo ấn tượng đã tạo nên thành công này.</p><p>Đạo diễn cho biết họ rất hạnh phúc khi tác phẩm được khán giả đón nhận nồng nhiệt.</p>",
+      "trangThaiDuyet": true,
+      "author": "editor1",
+      "danhMucs": ["Giải trí", "Phim ảnh"],
+      "tags": ["hot", "trending"]
+    }
+  ]
+}
