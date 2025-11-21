@@ -3,8 +3,13 @@ import { notFound } from 'next/navigation';
 import { getPostById } from '@/lib/data/homepage-data';
 import PostDetailClient from './PostDetailClient';
 
-export default function PostDetailPage({ params }: { params: { id: string } }) {
-  const postId = parseInt(params.id);
+export default async function PostDetailPage({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
+  const { id } = await params;
+  const postId = parseInt(id);
   const post = getPostById(postId);
 
   if (!post) {

@@ -74,8 +74,11 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
     }
   };
 
-  const handleUnlockPremium = () => {
-    setShowPremium(false);
+  const handleUnlockPremium = (password: string) => {
+    // Mở khóa khi nhập đúng mật khẩu "HUANDZ"
+    if (password.toUpperCase() === 'HUANDZ') {
+      setShowPremium(false);
+    }
   };
 
   const formattedDate = formatDistanceToNow(new Date(post.ngayDang), {
@@ -181,7 +184,9 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
 
         {/* Content */}
         <article className="prose prose-lg dark:prose-invert max-w-none mb-8 relative">
-          {showPremium && <PremiumOverlay onUnlock={handleUnlockPremium} />}
+          {showPremium && (
+            <PremiumOverlay onUnlock={handleUnlockPremium} />
+          )}
           <div dangerouslySetInnerHTML={{ __html: post.noiDungTinTuc }} />
         </article>
 
