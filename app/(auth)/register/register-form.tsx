@@ -12,34 +12,35 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-
-const formSchema = z.object({
-    username: z.string().min(2).max(50),
-})
+import { RegisterBody, RegisterBodyType } from "@/validate/validationAuth"
 
 
 const RegisterForm = () => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<RegisterBodyType>({
+        resolver: zodResolver(RegisterBody),
         defaultValues: {
-            username: "",
+            taiKhoan: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: RegisterBodyType) {
+        console.log(values)
     }
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                {/* user name  */}
+                {/* Tài khoản  */}
                 <FormField
                     control={form.control}
-                    name="username"
+                    name="taiKhoan"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel>Tài khoản</FormLabel>
                             <FormControl>
-                                <Input placeholder="User name" {...field} />
+                                <Input placeholder="Tài khoản" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -49,7 +50,7 @@ const RegisterForm = () => {
                 {/* email  */}
                 <FormField
                     control={form.control}
-                    name="username"
+                    name="email"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Email</FormLabel>
@@ -64,12 +65,12 @@ const RegisterForm = () => {
                 {/* password  */}
                 <FormField
                     control={form.control}
-                    name="username"
+                    name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel>Mật khẩu</FormLabel>
                             <FormControl>
-                                <Input placeholder="Password" type="password" {...field} />
+                                <Input placeholder="Mật khẩu" type="password" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -79,19 +80,26 @@ const RegisterForm = () => {
                 {/* confirm password  */}
                 <FormField
                     control={form.control}
-                    name="username"
+                    name="confirmPassword"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
+                            <FormLabel>Xác nhận mật khẩu</FormLabel>
                             <FormControl>
-                                <Input placeholder="Confirm password" type="password" {...field} />
+                                <Input placeholder="Xác nhận mật khẩu" type="password" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
 
-                <Button type="submit" className="bg-[#967f59] w-full hover:bg-[#70562c]">Submit</Button>
+                <Button type="submit" className="bg-[#967f59] w-full hover:bg-[#70562c]">Đăng ký</Button>
+                
+                <div className="text-center text-sm mt-4">
+                    <span className="text-gray-700">Đã có tài khoản? </span>
+                    <a href="/login" className="text-blue-600 hover:text-blue-800 font-semibold underline">
+                        Đăng nhập ngay
+                    </a>
+                </div>
             </form>
         </Form>
     )

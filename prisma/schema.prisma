@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
 }
 
@@ -40,6 +40,13 @@ model NguoiDungs {
   tinTuc          TinTucs[]
   binhLuan        BinhLuans[]
   khoTin          KhoLuuTin[]
+  cart            Cart[]
+  orders          Order[]
+  wallet          Wallet?
+  purchasedPosts  PurchasedPost[]
+  redeemCodes     RedeemCode[]
+  redeemUsages    RedeemCodeUsage[]
+  postSubmissions PostSubmission[]
 
   @@map("nguoidungs")
 }
@@ -119,10 +126,15 @@ model TinTucs {
   tomTat           String?     @db.MediumText
   maNguoiDung      Int
   nguoiDung        NguoiDungs  @relation(fields: [maNguoiDung], references: [id])
+  isPremium        Boolean     @default(false)
+  gia              Int?
   danhMuc          DanhMucs[]
   binhLuan         BinhLuans[]
   tags             Tags[]
   khoLuuTin        KhoLuuTin[]
+  cart             Cart[]
+  orderItems       OrderItem[]
+  purchasedPosts   PurchasedPost[]
 }
 
 model BinhLuans {
@@ -154,4 +166,132 @@ model Tags {
   id     Int       @id @default(autoincrement())
   tenTag String
   tinTuc TinTucs[]
+}
+
+// Giỏ hàng
+model Cart {
+  id          Int      @id @default(autoincrement())
+  maNguoiDung Int
+  nguoiDung   NguoiDungs @relation(fields: [maNguoiDung], references: [id])
+  maTinTuc    Int
+  tinTuc      TinTucs    @relation(fields: [maTinTuc], references: [id])
+  ngayThem    DateTime   @default(now())
+  
+  @@unique([maNguoiDung, maTinTuc])
+}
+
+// Đơn hàng
+model Order {
+  id              Int           @id @default(autoincrement())
+  maNguoiDung     Int
+  nguoiDung       NguoiDungs    @relation(fields: [maNguoiDung], references: [id])
+  tongTien        Int
+  trangThai       String        @default("pending") // pending, completed, cancelled
+  ngayTao         DateTime      @default(now())
+  ngayCapNhat     DateTime      @updatedAt
+  orderItems      OrderItem[]
+  payment         Payment?
+}
+
+// Chi tiết đơn hàng
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  maOrder   Int
+  order     Order    @relation(fields: [maOrder], references: [id])
+  maTinTuc  Int
+  tinTuc    TinTucs  @relation(fields: [maTinTuc], references: [id])
+  gia       Int
+  ngayTao   DateTime @default(now())
+}
+
+// Thanh toán
+model Payment {
+  id              Int      @id @default(autoincrement())
+  maOrder         Int      @unique
+  order           Order    @relation(fields: [maOrder], references: [id])
+  phuongThuc      String   // wallet, bank_transfer, redeem_code
+  soTien          Int
+  trangThai       String   @default("pending") // pending, success, failed
+  transactionId   String?
+  ngayThanhToan   DateTime @default(now())
+}
+
+// Mã giảm giá / Redeem code
+model RedeemCode {
+  id            Int       @id @default(autoincrement())
+  code          String    @unique
+  loaiCode      String    // single_post, unlimited, balance
+  giaTri        Int       // Giá trị: ID bài viết hoặc số tiền
+  soLanDung     Int       @default(1)
+  daDung        Int       @default(0)
+  ngayTao       DateTime  @default(now())
+  ngayHetHan    DateTime?
+  nguoiTao      Int
+  creator       NguoiDungs @relation(fields: [nguoiTao], references: [id])
+  trangThai     Boolean   @default(true)
+  usedBy        RedeemCodeUsage[]
+}
+
+// Lịch sử dùng code
+model RedeemCodeUsage {
+  id          Int        @id @default(autoincrement())
+  maCode      Int
+  code        RedeemCode @relation(fields: [maCode], references: [id])
+  maNguoiDung Int
+  nguoiDung   NguoiDungs @relation(fields: [maNguoiDung], references: [id])
+  ngayDung    DateTime   @default(now())
+  
+  @@unique([maCode, maNguoiDung])
+}
+
+// Ví tiền người dùng
+model Wallet {
+  id          Int      @id @default(autoincrement())
+  maNguoiDung Int      @unique
+  nguoiDung   NguoiDungs @relation(fields: [maNguoiDung], references: [id])
+  soDu        Int      @default(0)
+  ngayTao     DateTime @default(now())
+  ngayCapNhat DateTime @updatedAt
+  transactions WalletTransaction[]
+}
+
+// Lịch sử giao dịch ví
+model WalletTransaction {
+  id          Int      @id @default(autoincrement())
+  maVi        Int
+  wallet      Wallet   @relation(fields: [maVi], references: [id])
+  loaiGD      String   // deposit, withdraw, purchase
+  soTien      Int
+  moTa        String?
+  ngayGD      DateTime @default(now())
+}
+
+// Bài viết đã mua
+model PurchasedPost {
+  id          Int      @id @default(autoincrement())
+  maNguoiDung Int
+  nguoiDung   NguoiDungs @relation(fields: [maNguoiDung], references: [id])
+  maTinTuc    Int
+  tinTuc      TinTucs    @relation(fields: [maTinTuc], references: [id])
+  ngayMua     DateTime   @default(now())
+  gia         Int
+  
+  @@unique([maNguoiDung, maTinTuc])
+}
+
+// Bài viết chờ duyệt
+model PostSubmission {
+  id              Int      @id @default(autoincrement())
+  tieuDe          String
+  noiDung         String   @db.LongText
+  hinhAnh         String?
+  isPremium       Boolean  @default(false)
+  maNguoiDung     Int
+  nguoiDung       NguoiDungs @relation(fields: [maNguoiDung], references: [id])
+  trangThai       String   @default("pending") // pending, approved, rejected
+  maCodeTao       Int?
+  ngayGui         DateTime @default(now())
+  ngayDuyet       DateTime?
+  nguoiDuyet      Int?
+  ghiChu          String?
 }

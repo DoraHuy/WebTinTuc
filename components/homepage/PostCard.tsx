@@ -97,7 +97,14 @@ export function PostCard({ post, variant = 'default' }: PostCardProps) {
             </p>
           )}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.location.href = `/author/${post.nguoiDung.id}`;
+              }}
+            >
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold">
                 {post.nguoiDung.tenNguoiDung[0]}
               </div>
@@ -167,7 +174,16 @@ export function PostCard({ post, variant = 'default' }: PostCardProps) {
           )}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="font-medium">{post.nguoiDung.tenNguoiDung}</span>
+              <span
+                className="font-medium hover:text-primary transition-colors cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.location.href = `/author/${post.nguoiDung.id}`;
+                }}
+              >
+                {post.nguoiDung.tenNguoiDung}
+              </span>
               <span>•</span>
               <span>{formattedDate}</span>
             </div>

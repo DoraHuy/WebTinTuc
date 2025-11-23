@@ -1,6 +1,6 @@
 import { Post } from '@/lib/types/Homepage';
 import { notFound } from 'next/navigation';
-import { getPostById } from '@/lib/data/homepage-data';
+import { getPostById } from '@/lib/data/homepage-data-mysql';
 import PostDetailClient from './PostDetailClient';
 
 export default async function PostDetailPage({ 
@@ -10,7 +10,7 @@ export default async function PostDetailPage({
 }) {
   const { id } = await params;
   const postId = parseInt(id);
-  const post = getPostById(postId);
+  const post = await getPostById(postId);
 
   if (!post) {
     notFound();

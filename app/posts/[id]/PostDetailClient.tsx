@@ -1,7 +1,7 @@
 'use client';
 
 import { Post } from '@/lib/types/Homepage';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Eye,
@@ -17,6 +17,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { PremiumOverlay } from '@/components/homepage/PremiumBadge';
+import BuyButton from '@/components/BuyButton';
 
 interface PostDetailClientProps {
   post: Post;
@@ -35,6 +36,8 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
   const [bookmarked, setBookmarked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likeCount || 0);
   const [showPremium, setShowPremium] = useState(post.isPremium);
+  const [hasAccess, setHasAccess] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(post.isPremium);
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState<Comment[]>([
     {
@@ -50,6 +53,30 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
       timestamp: new Date('2024-11-19T11:15:00'),
     },
   ]);
+
+  // Kiểm tra quyền truy cập bài viết premium
+  useEffect(() => {
+    if (post.isPremium) {
+      checkAccess();
+    }
+  }, [post.id]);
+
+  const checkAccess = async () => {
+    try {
+      // TODO: Lấy userId từ session thật
+      const userId = 1; 
+      const res = await fetch(`/api/purchased?userId=${userId}&postId=${post.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setHasAccess(data.hasAccess);
+        setShowPremium(!data.hasAccess);
+      }
+    } catch (error) {
+      console.error('Lỗi kiểm tra quyền truy cập:', error);
+    } finally {
+      setCheckingAccess(false);
+    }
+  };
 
   const handleLike = () => {
     if (liked) {
@@ -182,9 +209,80 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
           </div>
         )}
 
+        {/* Premium Actions - Hiện các tùy chọn cho bài premium */}
+        {post.isPremium && !hasAccess && !checkingAccess && (
+          <div className="mb-8 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950/20 dark:to-amber-950/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-xl p-6">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <Crown className="w-6 h-6 text-white fill-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Bài viết Premium</h3>
+                <p className="text-muted-foreground">
+                  Đây là bài viết cao cấp. Bạn có thể mua trực tiếp hoặc đăng bài để nhận mã code đọc miễn phí!
+                </p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Option 1: Mua trực tiếp */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-5 border-2 border-transparent hover:border-primary transition-all">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">💰</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold">Mua ngay</h4>
+                    <p className="text-lg font-semibold text-primary">{(post.gia || 0).toLocaleString()}đ</p>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Thanh toán một lần và đọc vĩnh viễn
+                </p>
+                <BuyButton
+                  postId={post.id}
+                  price={post.gia || 0}
+                  isPremium={post.isPremium}
+                  userId={1}
+                  hasAccess={hasAccess}
+                />
+              </div>
+
+              {/* Option 2: Đăng bài để đọc */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-5 border-2 border-transparent hover:border-green-500 transition-all">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">✍️</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold">Đăng bài để đọc</h4>
+                    <p className="text-sm font-semibold text-green-600 dark:text-green-400">MIỄN PHÍ</p>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Viết bài và nhận mã code để đọc premium
+                </p>
+                <Link 
+                  href="/posts/submit"
+                  className="block w-full text-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+                >
+                  Đăng bài ngay
+                </Link>
+              </div>
+            </div>
+
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p className="text-sm text-blue-900 dark:text-blue-100">
+                💡 <strong>Mẹo:</strong> Đăng bài free (miễn phí) sẽ nhận được mã code sau khi admin duyệt. 
+                Dùng mã code này để đọc bất kỳ bài premium nào!
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Content */}
         <article className="prose prose-lg dark:prose-invert max-w-none mb-8 relative">
-          {showPremium && (
+          {showPremium && !hasAccess && (
             <PremiumOverlay onUnlock={handleUnlockPremium} />
           )}
           <div dangerouslySetInnerHTML={{ __html: post.noiDungTinTuc }} />

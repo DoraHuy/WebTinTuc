@@ -27,6 +27,7 @@ export interface Post {
   ngayDang: Date | string;
   thoiGianChinhSua?: Date | string;
   isPremium: boolean;
+  gia?: number;
   premiumType?: 'paid' | 'rewrite'; // trả tiền hoặc viết lại 2 bài
   viewCount?: number;
   likeCount?: number;

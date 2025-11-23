@@ -1,147 +1,150 @@
 import { Post, Author, Category, Tag, TopAuthor, TrendingPost } from '@/lib/types/Homepage';
+import { PrismaClient } from '@/lib/generated/prisma';
 
-// Import data trực tiếp từ JSON
-const homepageDataJson = require('../../public/data/homepage-data.json');
+const prisma = new PrismaClient();
 
-export function getHomepageData() {
-  return homepageDataJson;
+export async function getHomepageData() {
+  const [posts, categories, tags, authors] = await Promise.all([
+    prisma.tinTucs.findMany({
+      include: {
+        nguoiDung: true,
+        danhMuc: true,
+        tags: true,
+      },
+    }),
+    prisma.danhMucs.findMany(),
+    prisma.tags.findMany(),
+    prisma.nguoiDungs.findMany(),
+  ]);
+
+  return { posts, categories, tags, authors };
 }
 
-export function getPosts(options?: {
+export async function getPosts(options?: {
   limit?: number;
   offset?: number;
   categoryId?: number;
   isPremium?: boolean;
   sortBy?: 'latest' | 'trending' | 'popular';
-}): Post[] {
-  const data = getHomepageData();
+}): Promise<Post[]> {
   const { limit, offset = 0, categoryId, isPremium, sortBy = 'latest' } = options || {};
   
-  let posts = data.posts.map((post: any) => ({
-    ...post,
-    nguoiDung: data.authors.find((a: any) => a.id === post.authorId),
-    danhMuc: post.categoryIds.map((cId: number) => 
-      data.categories.find((c: any) => c.id === cId)
-    ),
-    tags: post.tagIds.map((tId: number) => 
-      data.tags.find((t: any) => t.id === tId)
-    ),
-  }));
+  const where: any = {};
   
-  // Filter by category
   if (categoryId) {
-    posts = posts.filter((post: Post) => 
-      post.danhMuc.some(c => c.id === categoryId)
-    );
+    where.danhMuc = {
+      some: { id: categoryId }
+    };
   }
   
-  // Filter by premium
+  // Filter by isPremium if specified
   if (isPremium !== undefined) {
-    posts = posts.filter((post: Post) => post.isPremium === isPremium);
+    where.isPremium = isPremium;
   }
   
-  // Sort
+  let orderBy: any = { ngayDang: 'desc' };
   if (sortBy === 'trending' || sortBy === 'popular') {
-    posts.sort((a: Post, b: Post) => (b.viewCount || 0) - (a.viewCount || 0));
-  } else {
-    posts.sort((a: Post, b: Post) => 
-      new Date(b.ngayDang).getTime() - new Date(a.ngayDang).getTime()
-    );
+    orderBy = { thoiGianDang: 'desc' };
   }
   
-  // Pagination
-  if (limit) {
-    posts = posts.slice(offset, offset + limit);
-  }
+  const posts = await prisma.tinTucs.findMany({
+    where,
+    orderBy,
+    skip: offset,
+    take: limit,
+    include: {
+      nguoiDung: true,
+      danhMuc: true,
+      tags: true,
+    },
+  });
   
-  return posts;
+  return posts as any;
 }
 
-export function getFeaturedPost(): Post {
-  const posts = getPosts({ sortBy: 'popular', limit: 1 });
+export async function getFeaturedPost(): Promise<Post> {
+  const posts = await getPosts({ sortBy: 'popular', limit: 1 });
   return posts[0];
 }
 
-export function getLatestPosts(limit: number = 4): Post[] {
+export async function getLatestPosts(limit: number = 4): Promise<Post[]> {
   return getPosts({ limit, sortBy: 'latest' });
 }
 
-export function getCategories(): Category[] {
-  const data = getHomepageData();
-  return data.categories;
+export async function getCategories(): Promise<Category[]> {
+  return prisma.danhMucs.findMany({
+    where: { parentId: null }
+  }) as any;
 }
 
-export function getTags(): Tag[] {
-  const data = getHomepageData();
-  return data.tags;
+export async function getTags(): Promise<Tag[]> {
+  return prisma.tags.findMany() as any;
 }
 
-export function getTopAuthors(type: 'posts' | 'interactions' | 'revenue', limit: number = 5): TopAuthor[] {
-  const data = getHomepageData();
-  const authors = [...data.authors];
+export async function getTopAuthors(type: 'posts' | 'interactions' | 'revenue', limit: number = 5): Promise<TopAuthor[]> {
+  const authors = await prisma.nguoiDungs.findMany({
+    include: {
+      tinTuc: true,
+    },
+  });
   
-  let sortKey: 'totalPosts' | 'totalInteractions' | 'totalRevenue' = 'totalPosts';
-  if (type === 'interactions') sortKey = 'totalInteractions';
-  if (type === 'revenue') sortKey = 'totalRevenue';
-  
-  authors.sort((a: any, b: any) => b[sortKey] - a[sortKey]);
-  
-  return authors.slice(0, limit).map((author: any, index: number) => ({
-    ...author,
+  const authorsWithStats = authors.map((author, index) => ({
+    id: author.id,
+    tenNguoiDung: author.tenNguoiDung,
+    email: author.email,
     rank: index + 1,
-    stats: author[sortKey],
+    stats: author.tinTuc.length,
   }));
+  
+  authorsWithStats.sort((a, b) => b.stats - a.stats);
+  
+  return authorsWithStats.slice(0, limit) as any;
 }
 
-export function getTrendingPosts(limit: number = 5): TrendingPost[] {
-  const posts = getPosts({ sortBy: 'trending', limit });
+export async function getTrendingPosts(limit: number = 5): Promise<TrendingPost[]> {
+  const posts = await getPosts({ sortBy: 'trending', limit });
   
-  return posts.map((post: Post) => ({
+  return posts.map((post: any) => ({
     id: post.id,
     tenTinTuc: post.tenTinTuc,
-    viewCount: post.viewCount || 0,
+    viewCount: 0,
     ngayDang: post.ngayDang,
     nguoiDung: {
       tenNguoiDung: post.nguoiDung.tenNguoiDung,
     },
-    thumbnail: post.thumbnail,
-  }));
+    thumbnail: null,
+  })) as any;
 }
 
-export function getTotalPosts(filters?: {
+export async function getTotalPosts(filters?: {
   categoryId?: number;
   isPremium?: boolean;
-}): number {
-  const data = getHomepageData();
-  let posts = data.posts;
+}): Promise<number> {
+  const where: any = {};
   
   if (filters?.categoryId) {
-    posts = posts.filter((post: any) => 
-      post.categoryIds.includes(filters.categoryId)
-    );
+    where.danhMuc = {
+      some: { id: filters.categoryId }
+    };
   }
   
+  // Filter by isPremium if specified
   if (filters?.isPremium !== undefined) {
-    posts = posts.filter((post: any) => post.isPremium === filters.isPremium);
+    where.isPremium = filters.isPremium;
   }
   
-  return posts.length;
+  return prisma.tinTucs.count({ where });
 }
 
-export function getPostById(id: number): Post | null {
-  const data = getHomepageData();
-  const post = data.posts.find((p: any) => p.id === id);
+export async function getPostById(id: number): Promise<Post | null> {
+  const post = await prisma.tinTucs.findUnique({
+    where: { id },
+    include: {
+      nguoiDung: true,
+      danhMuc: true,
+      tags: true,
+    },
+  });
   
-  if (!post) return null;
-  
-  return {
-    ...post,
-    nguoiDung: data.authors.find((a: any) => a.id === post.authorId),
-    danhMuc: post.categoryIds.map((cId: number) => 
-      data.categories.find((c: any) => c.id === cId)
-    ),
-    tags: post.tagIds.map((tId: number) => 
-      data.tags.find((t: any) => t.id === tId)
-    ),
-  };
+  return post as any;
 }

@@ -1,14 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { HeroSection } from '@/components/homepage/HeroSection';
 import { CategoryNav } from '@/components/homepage/CategoryNav';
 import { PostGrid } from '@/components/homepage/PostGrid';
 import { Sidebar } from '@/components/homepage/Sidebar';
 import { PostFilter } from '@/components/homepage/PostFilter';
 import { PostPagination } from '@/components/homepage/PostPagination';
+import { ChatboxAI } from '@/components/ChatboxAI';
 import { FilterOptions, PaginationInfo, Post, Category, TopAuthor, TrendingPost } from '@/lib/types/Homepage';
-import { getPosts, getTotalPosts } from '@/lib/data/homepage-data';
+import CartIcon from '@/components/CartIcon';
+import { ModeToggle } from '@/components/ModeToggle';
+import { Wallet, ShoppingBag, User, FileEdit, List } from 'lucide-react';
 
 interface HomePageClientProps {
   featuredPost: Post;
@@ -47,44 +51,45 @@ export default function HomePageClient({
     itemsPerPage,
   });
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = async (page: number) => {
     const offset = (page - 1) * itemsPerPage;
-    const newPosts = getPosts({
-      limit: itemsPerPage,
-      offset,
-      categoryId: filters.category,
-      isPremium: filters.isPremium,
-      sortBy: filters.sortBy,
-    });
     
-    setPosts(newPosts);
-    setPagination({ ...pagination, currentPage: page });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    try {
+      const response = await fetch(`/api/posts?limit=${itemsPerPage}&offset=${offset}&categoryId=${filters.category || ''}&isPremium=${filters.isPremium !== undefined ? filters.isPremium : ''}&sortBy=${filters.sortBy || 'latest'}`);
+      const data = await response.json();
+      
+      if (data.posts) {
+        setPosts(data.posts);
+        setPagination({ ...pagination, currentPage: page });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
   };
 
-  const handleFilterChange = (newFilters: FilterOptions) => {
+  const handleFilterChange = async (newFilters: FilterOptions) => {
     setFilters(newFilters);
     
-    const filteredTotal = getTotalPosts({
-      categoryId: newFilters.category,
-      isPremium: newFilters.isPremium,
-    });
-    
-    const newPosts = getPosts({
-      limit: itemsPerPage,
-      offset: 0,
-      categoryId: newFilters.category,
-      isPremium: newFilters.isPremium,
-      sortBy: newFilters.sortBy,
-    });
-    
-    setPosts(newPosts);
-    setPagination({
-      currentPage: 1,
-      totalPages: Math.ceil(filteredTotal / itemsPerPage),
-      totalItems: filteredTotal,
-      itemsPerPage,
-    });
+    try {
+      const countResponse = await fetch(`/api/posts/count?categoryId=${newFilters.category || ''}&isPremium=${newFilters.isPremium !== undefined ? newFilters.isPremium : ''}`);
+      const countData = await countResponse.json();
+      
+      const postsResponse = await fetch(`/api/posts?limit=${itemsPerPage}&offset=0&categoryId=${newFilters.category || ''}&isPremium=${newFilters.isPremium !== undefined ? newFilters.isPremium : ''}&sortBy=${newFilters.sortBy || 'latest'}`);
+      const postsData = await postsResponse.json();
+      
+      if (postsData.posts) {
+        setPosts(postsData.posts);
+        setPagination({
+          currentPage: 1,
+          totalPages: Math.ceil(countData.count / itemsPerPage),
+          totalItems: countData.count,
+          itemsPerPage,
+        });
+      }
+    } catch (error) {
+      console.error('Error filtering posts:', error);
+    }
   };
 
   return (
@@ -102,19 +107,43 @@ export default function HomePageClient({
                 <p className="text-xs text-muted-foreground">Tin tức công nghệ hàng đầu</p>
               </div>
             </div>
-            <nav className="hidden md:flex items-center gap-6">
-              <a href="/" className="text-sm font-medium hover:text-primary transition-colors">
+            <nav className="hidden md:flex items-center gap-4">
+              <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
                 Trang chủ
-              </a>
-              <a href="/about" className="text-sm font-medium hover:text-primary transition-colors">
-                Giới thiệu
-              </a>
-              <a href="/contact" className="text-sm font-medium hover:text-primary transition-colors">
-                Liên hệ
-              </a>
-              <button className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-white rounded-lg font-medium text-sm hover:shadow-lg transition-all">
-                Nâng cấp Premium
-              </button>
+              </Link>
+              <Link href="/purchased" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
+                <ShoppingBag className="w-4 h-4" />
+                Đã mua
+              </Link>
+              <Link href="/wallet" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
+                <Wallet className="w-4 h-4" />
+                Ví
+              </Link>
+              <Link href="/posts/submit" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
+                <FileEdit className="w-4 h-4" />
+                Đăng bài
+              </Link>
+              <Link href="/my-submissions" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
+                <List className="w-4 h-4" />
+                Bài đã gửi
+              </Link>
+              
+              {/* Cart Icon */}
+              <CartIcon userId={1} />
+              
+              {/* Theme Toggle */}
+              <ModeToggle />
+              
+              {/* Login/Profile */}
+              <div className="flex items-center gap-2">
+                <Link href="/login" className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium text-sm hover:shadow-lg transition-all">
+                  <User className="w-4 h-4" />
+                  Đăng nhập
+                </Link>
+                <Link href="/register" className="flex items-center gap-2 px-4 py-2 border-2 border-primary text-primary rounded-lg font-medium text-sm hover:bg-primary hover:text-primary-foreground transition-all">
+                  Đăng ký
+                </Link>
+              </div>
             </nav>
           </div>
         </div>
@@ -166,19 +195,19 @@ export default function HomePageClient({
               <h4 className="font-semibold mb-4">Danh mục</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <Link href="/" className="hover:text-primary">
                     Công nghệ
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <Link href="/" className="hover:text-primary">
                     AI
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <Link href="/" className="hover:text-primary">
                     Smartphone
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -186,19 +215,19 @@ export default function HomePageClient({
               <h4 className="font-semibold mb-4">Về chúng tôi</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <Link href="/features" className="hover:text-primary">
                     Giới thiệu
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <Link href="/features" className="hover:text-primary">
                     Liên hệ
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <Link href="/features" className="hover:text-primary">
                     Điều khoản
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -206,17 +235,17 @@ export default function HomePageClient({
               <h4 className="font-semibold mb-4">Theo dõi</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary">
                     Facebook
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary">
                     Twitter
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary">
                     YouTube
                   </a>
                 </li>
@@ -224,10 +253,13 @@ export default function HomePageClient({
             </div>
           </div>
           <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-            © 2024 TechNews. All rights reserved.
+            © 2025 TechNews. All rights reserved.
           </div>
         </div>
       </footer>
+
+      {/* AI Chatbox */}
+      <ChatboxAI />
     </div>
   );
 }

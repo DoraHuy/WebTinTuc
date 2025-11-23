@@ -3,6 +3,7 @@
 import { TopAuthor, TopPeriod } from '@/lib/types/Homepage';
 import { Crown, Medal, Award, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface TopAuthorsProps {
   authors: TopAuthor[];
@@ -97,8 +98,9 @@ export function TopAuthors({ authors, type }: TopAuthorsProps) {
       {/* Authors List */}
       <div className="space-y-3">
         {authors.map((author) => (
-          <div
+          <Link
             key={author.id}
+            href={`/author/${author.id}`}
             className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
           >
             <div className="flex-shrink-0">{getIcon(author.rank)}</div>
@@ -111,7 +113,7 @@ export function TopAuthors({ authors, type }: TopAuthorsProps) {
                 {author.stats.toLocaleString()} {getStatLabel()}
               </p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

@@ -7,20 +7,32 @@ import {
   getTopAuthors,
   getTrendingPosts,
   getTotalPosts,
-} from '@/lib/data/homepage-data';
+} from '@/lib/data/homepage-data-mysql';
 import HomePageClient from './HomePageClient';
 
-export default function Home() {
-  // Server-side data fetching
-  const featuredPost = getFeaturedPost();
-  const latestPosts = getLatestPosts(4);
-  const initialPosts = getPosts({ limit: 10, offset: 0 });
-  const categories = getCategories();
-  const topAuthors = getTopAuthors('posts', 5);
-  const topInteractions = getTopAuthors('interactions', 5);
-  const topRevenue = getTopAuthors('revenue', 5);
-  const trendingPosts = getTrendingPosts(5);
-  const totalPosts = getTotalPosts();
+export default async function Home() {
+  // Server-side data fetching từ MySQL
+  const [
+    featuredPost,
+    latestPosts,
+    initialPosts,
+    categories,
+    topAuthors,
+    topInteractions,
+    topRevenue,
+    trendingPosts,
+    totalPosts,
+  ] = await Promise.all([
+    getFeaturedPost(),
+    getLatestPosts(4),
+    getPosts({ limit: 10, offset: 0 }),
+    getCategories(),
+    getTopAuthors('posts', 5),
+    getTopAuthors('interactions', 5),
+    getTopAuthors('revenue', 5),
+    getTrendingPosts(5),
+    getTotalPosts(),
+  ]);
 
   return (
     <HomePageClient

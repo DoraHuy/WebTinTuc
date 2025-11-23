@@ -244,6 +244,169 @@
       "author": "editor1",
       "danhMucs": ["Giải trí", "Phim ảnh"],
       "tags": ["hot", "trending"]
+    },
+    {
+      "tenTinTuc": "Phân tích chuyên sâu về xu hướng Bitcoin 2025",
+      "tomTat": "Bitcoin đang có những biến động mạnh. Chuyên gia chia sẻ góc nhìn về tiềm năng và rủi ro.",
+      "noiDungTinTuc": "<h2>Bitcoin - Tương lai của tài chính?</h2><p>Trong năm 2025, Bitcoin đã có những đợt tăng giảm đáng kể. Các chuyên gia tài chính cho rằng đây là tài sản có tiềm năng lớn nhưng cũng đi kèm nhiều rủi ro.</p><p>Công nghệ blockchain đằng sau Bitcoin đang được áp dụng rộng rãi trong nhiều lĩnh vực như tài chính, logistics, và y tế. Điều này cho thấy giá trị dài hạn của hệ sinh thái crypto.</p><p>Tuy nhiên, nhà đầu tư cần thận trọng và nghiên cứu kỹ trước khi quyết định đầu tư vào Bitcoin hoặc các loại tiền điện tử khác.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 50000,
+      "author": "editor1",
+      "danhMucs": ["Kinh tế", "Công nghệ"],
+      "tags": ["độc quyền", "trending"]
+    },
+    {
+      "tenTinTuc": "Hướng dẫn toàn tập lập trình AI với Python",
+      "tomTat": "Khóa học chi tiết từ cơ bản đến nâng cao về Machine Learning và Deep Learning.",
+      "noiDungTinTuc": "<h2>Bắt đầu với AI và Python</h2><p>Python là ngôn ngữ phổ biến nhất trong lĩnh vực AI và Machine Learning. Bài viết này cung cấp lộ trình học tập đầy đủ.</p><h3>Các bước cơ bản:</h3><ol><li>Nắm vững Python cơ bản</li><li>Học thư viện NumPy, Pandas</li><li>Khám phá Scikit-learn cho ML</li><li>Deep Learning với TensorFlow/PyTorch</li><li>Thực hành với các dự án thực tế</li></ol><p>Bài viết bao gồm code mẫu chi tiết, ví dụ thực tế và tài liệu tham khảo chuyên sâu.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 75000,
+      "author": "author1",
+      "danhMucs": ["Công nghệ", "AI", "Giáo dục"],
+      "tags": ["độc quyền", "hot"]
+    },
+    {
+      "tenTinTuc": "Chiến lược SEO hiệu quả cho website năm 2025",
+      "tomTat": "Cập nhật những kỹ thuật SEO mới nhất để tăng thứ hạng website trên Google.",
+      "noiDungTinTuc": "<h2>SEO 2025 - Những thay đổi quan trọng</h2><p>Google liên tục cập nhật thuật toán, đòi hỏi các chuyên gia SEO phải thích nghi nhanh chóng. Bài viết này tổng hợp các chiến lược hiệu quả nhất.</p><h3>Yếu tố then chốt:</h3><ul><li>Core Web Vitals và trải nghiệm người dùng</li><li>Nội dung chất lượng với AI-generated content</li><li>E-E-A-T (Experience, Expertise, Authority, Trust)</li><li>Mobile-first indexing</li><li>Schema markup và structured data</li></ul><p>Kèm theo case study thực tế và checklist SEO đầy đủ.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 60000,
+      "author": "author1",
+      "danhMucs": ["Công nghệ"],
+      "tags": ["độc quyền", "nổi bật"]
+    },
+    {
+      "tenTinTuc": "Bí quyết đầu tư chứng khoán cho người mới bắt đầu",
+      "tomTat": "Hướng dẫn chi tiết từ A-Z để bắt đầu đầu tư chứng khoán an toàn và hiệu quả.",
+      "noiDungTinTuc": "<h2>Khởi đầu hành trình đầu tư</h2><p>Đầu tư chứng khoán là một trong những kênh sinh lời hấp dẫn nhưng cũng chứa đựng nhiều rủi ro. Bài viết này giúp bạn có nền tảng vững chắc.</p><h3>Nội dung bao gồm:</h3><ol><li>Mở tài khoản chứng khoán đúng cách</li><li>Phân tích cơ bản và kỹ thuật</li><li>Quản lý rủi ro và danh mục đầu tư</li><li>Tâm lý học đầu tư</li><li>10 sai lầm thường gặp cần tránh</li></ol><p>Kèm theo template quản lý danh mục và công cụ phân tích miễn phí.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 80000,
+      "author": "editor1",
+      "danhMucs": ["Kinh tế", "Thị trường"],
+      "tags": ["độc quyền", "hot"]
+    },
+    {
+      "tenTinTuc": "Top 10 laptop gaming tốt nhất 2025",
+      "tomTat": "Đánh giá chi tiết các dòng laptop gaming hàng đầu với hiệu năng mạnh mẽ.",
+      "noiDungTinTuc": "<h2>Laptop gaming - Lựa chọn hoàn hảo</h2><p>Bài viết đánh giá sâu 10 dòng laptop gaming được yêu thích nhất năm 2025, từ phân khúc tầm trung đến cao cấp.</p><h3>Tiêu chí đánh giá:</h3><ul><li>CPU và GPU performance</li><li>Màn hình (refresh rate, độ phân giải)</li><li>Hệ thống tản nhiệt</li><li>Pin và tính di động</li><li>Giá cả và độ bền</li></ul><p>Mỗi sản phẩm có đánh giá chi tiết, benchmark, ưu nhược điểm và khuyến nghị mua hàng.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 45000,
+      "author": "author1",
+      "danhMucs": ["Công nghệ", "Laptop"],
+      "tags": ["độc quyền", "nổi bật"]
+    },
+    {
+      "tenTinTuc": "Cẩm nang du lịch bụi Đông Nam Á",
+      "tomTat": "Kinh nghiệm chi tiết cho chuyến du lịch tiết kiệm qua các nước Đông Nam Á.",
+      "noiDungTinTuc": "<h2>Khám phá Đông Nam Á với ngân sách hợp lý</h2><p>Đông Nam Á là điểm đến lý tưởng cho du lịch bụi với chi phí thấp và trải nghiệm phong phú. Bài viết chia sẻ kinh nghiệm thực tế qua 8 quốc gia.</p><h3>Nội dung chi tiết:</h3><ul><li>Lộ trình di chuyển tối ưu</li><li>Ước tính chi phí từng nước</li><li>Địa điểm must-visit và hidden gems</li><li>Mẹo đặt vé máy bay và khách sạn rẻ</li><li>An toàn và sức khỏe khi du lịch</li></ul><p>Kèm map tương tác, checklist đồ dùng và danh bạ liên lạc khẩn cấp.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 55000,
+      "author": "author1",
+      "danhMucs": ["Du lịch"],
+      "tags": ["độc quyền"]
+    },
+    {
+      "tenTinTuc": "Masterclass nhiếp ảnh chân dung chuyên nghiệp",
+      "tomTat": "Khóa học toàn diện về kỹ thuật chụp ảnh chân dung từ chuyên gia hàng đầu.",
+      "noiDungTinTuc": "<h2>Nghệ thuật chụp chân dung</h2><p>Nhiếp ảnh chân dung là một trong những thể loại phổ biến nhất. Bài viết này chia sẻ bí quyết từ nhiếp ảnh gia 15 năm kinh nghiệm.</p><h3>Chủ đề chính:</h3><ol><li>Lựa chọn ống kính và thiết bị</li><li>Ánh sáng tự nhiên vs studio</li><li>Tư thế và góc chụp đẹp</li><li>Giao tiếp với model</li><li>Post-processing chuyên nghiệp</li></ol><p>Bao gồm 50+ ảnh mẫu có hướng dẫn chi tiết và preset Lightroom.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 70000,
+      "author": "author1",
+      "danhMucs": ["Giải trí"],
+      "tags": ["độc quyền", "hot"]
+    },
+    {
+      "tenTinTuc": "Bóng đá Việt Nam: Phân tích chiến thuật sâu",
+      "tomTat": "Góc nhìn chuyên môn về lối chơi và chiến thuật của đội tuyển Việt Nam.",
+      "noiDungTinTuc": "<h2>Đội tuyển Việt Nam - Chiến thuật và tương lai</h2><p>Bài phân tích chuyên sâu về sơ đồ chiến thuật, điểm mạnh điểm yếu của đội tuyển Việt Nam qua các trận đấu gần đây.</p><h3>Nội dung bao gồm:</h3><ul><li>Sơ đồ 3-5-2 và biến thể</li><li>Phong cách pressing hiện đại</li><li>Phân tích từng cầu thủ chủ chốt</li><li>So sánh với các đối thủ khu vực</li><li>Dự đoán cho các giải đấu sắp tới</li></ul><p>Kèm video phân tích chi tiết và biểu đồ thống kê.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 40000,
+      "author": "editor1",
+      "danhMucs": ["Thể thao", "Bóng đá"],
+      "tags": ["độc quyền", "trending"]
+    },
+    {
+      "tenTinTuc": "Cập nhật tin công nghệ nổi bật tuần này",
+      "tomTat": "Tổng hợp những sự kiện và ra mắt sản phẩm công nghệ quan trọng trong tuần.",
+      "noiDungTinTuc": "<h2>Tin công nghệ hot nhất tuần</h2><p>Tuần này có nhiều sự kiện công nghệ đáng chú ý. Apple công bố iPhone mới, Google ra mắt Pixel 9, và Tesla cập nhật phần mềm tự lái.</p><p>Các công ty khởi nghiệp AI cũng nhận được vốn đầu tư lớn. OpenAI, Anthropic và Mistral đều có những công bố quan trọng về model mới.</p><p>Thị trường chip bán dẫn tiếp tục sôi động với các thương vụ M&A và đầu tư nhà máy mới.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": false,
+      "author": "editor1",
+      "danhMucs": ["Công nghệ"],
+      "tags": ["mới nhất", "tin nhanh"]
+    },
+    {
+      "tenTinTuc": "Lễ hội âm nhạc lớn nhất năm sắp diễn ra",
+      "tomTat": "Thông tin về lễ hội âm nhạc quốc tế với dàn line-up khủng.",
+      "noiDungTinTuc": "<h2>Đại nhạc hội đình đám</h2><p>Lễ hội âm nhạc quốc tế sẽ diễn ra vào tháng sau với sự tham gia của hơn 50 nghệ sĩ nổi tiếng trong nước và quốc tế.</p><p>Các khách mời bao gồm DJ hàng đầu thế giới, các ban nhạc rock nổi tiếng và những ngôi sao Vpop đang hot nhất hiện nay.</p><p>Vé đã được mở bán và đang rất ế hàng. Dự kiến sẽ có hơn 50,000 khán giả tham dự sự kiện này.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": false,
+      "author": "author1",
+      "danhMucs": ["Giải trí", "Âm nhạc"],
+      "tags": ["hot", "mới nhất"]
+    },
+    {
+      "tenTinTuc": "Blockchain và Web3: Tương lai của Internet",
+      "tomTat": "Khám phá công nghệ blockchain và cách Web3 đang thay đổi cách chúng ta sử dụng Internet.",
+      "noiDungTinTuc": "<h2>Web3 - Internet thế hệ mới</h2><p>Web3 đại diện cho làn sóng mới của Internet, dựa trên công nghệ blockchain và phi tập trung. Không giống Web2 hiện tại với các nền tảng tập trung, Web3 cho phép người dùng sở hữu dữ liệu của mình.</p><h3>Các công nghệ cốt lõi:</h3><ul><li>Smart Contracts - Hợp đồng thông minh tự động</li><li>DeFi - Tài chính phi tập trung</li><li>NFT - Token không thể thay thế</li><li>DAO - Tổ chức tự trị phi tập trung</li><li>Metaverse - Thế giới ảo kết nối</li></ul><p>Nhiều doanh nghiệp lớn như Meta, Microsoft, Nike đang đầu tư mạnh vào Web3. Các ứng dụng thực tế từ gaming đến bất động sản đều được phát triển trên nền tảng này.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 65000,
+      "author": "author1",
+      "danhMucs": ["Công nghệ"],
+      "tags": ["độc quyền", "hot"]
+    },
+    {
+      "tenTinTuc": "Cẩm nang đầu tư bất động sản 2025",
+      "tomTat": "Hướng dẫn chi tiết về đầu tư bất động sản, từ chọn vị trí đến pháp lý và tài chính.",
+      "noiDungTinTuc": "<h2>Đầu tư BĐS thông minh</h2><p>Bất động sản vẫn là kênh đầu tư hấp dẫn tại Việt Nam với tiềm năng sinh lời cao. Bài viết này cung cấp kiến thức toàn diện cho nhà đầu tư.</p><h3>Các yếu tố quan trọng:</h3><ol><li>Vị trí vàng - Tiêu chí hàng đầu</li><li>Hạ tầng và quy hoạch</li><li>Pháp lý minh bạch</li><li>Nguồn vốn và đòn bẩy tài chính</li><li>Thời điểm mua bán tối ưu</li></ol><p>Phân tích chi tiết về các phân khúc: căn hộ, đất nền, shophouse, biệt thự. Kèm theo case study thực tế và công cụ tính toán ROI.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 90000,
+      "author": "editor1",
+      "danhMucs": ["Kinh tế"],
+      "tags": ["độc quyền", "nổi bật"]
+    },
+    {
+      "tenTinTuc": "Machine Learning trong thực tế: Từ lý thuyết đến ứng dụng",
+      "tomTat": "Hướng dẫn triển khai các mô hình ML trong production với Python và cloud services.",
+      "noiDungTinTuc": "<h2>ML Production-Ready</h2><p>Xây dựng và triển khai mô hình Machine Learning trong môi trường production đòi hỏi nhiều kỹ năng hơn là chỉ huấn luyện model.</p><h3>Quy trình đầy đủ:</h3><ul><li>Data Pipeline - Thu thập và xử lý dữ liệu</li><li>Feature Engineering - Tạo features hiệu quả</li><li>Model Training & Evaluation</li><li>MLOps - CI/CD cho ML</li><li>Monitoring và A/B Testing</li><li>Scaling và Optimization</li></ul><p>Hướng dẫn chi tiết về deployment trên AWS, GCP, Azure. Code mẫu với FastAPI, Docker, Kubernetes.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 85000,
+      "author": "author1",
+      "danhMucs": ["Công nghệ", "AI"],
+      "tags": ["độc quyền", "hot"]
+    },
+    {
+      "tenTinTuc": "Trading crypto chuyên nghiệp: Chiến lược và quản trị rủi ro",
+      "tomTat": "Bí quyết trading cryptocurrency hiệu quả với phân tích kỹ thuật và quản lý vốn.",
+      "noiDungTinTuc": "<h2>Crypto Trading Mastery</h2><p>Thị trường crypto biến động mạnh nhưng cũng mang lại cơ hội sinh lời cao. Bài viết này chia sẻ kinh nghiệm từ trader 7 năm kinh nghiệm.</p><h3>Nội dung chi tiết:</h3><ol><li>Phân tích kỹ thuật nâng cao (Ichimoku, Elliott Wave)</li><li>Reading order book và volume profile</li><li>Quản trị rủi ro - Risk/Reward ratio</li><li>Psychology trading - Kiểm soát cảm xúc</li><li>DCA và Dollar-Cost Averaging</li><li>Tax và pháp lý crypto tại VN</li></ol><p>Kèm theo chiến lược cụ thể cho bull/bear market và công cụ backtest.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 95000,
+      "author": "editor1",
+      "danhMucs": ["Kinh tế", "Công nghệ"],
+      "tags": ["độc quyền", "trending"]
+    },
+    {
+      "tenTinTuc": "Fitness và dinh dưỡng khoa học cho dân văn phòng",
+      "tomTat": "Chương trình tập luyện và chế độ ăn tối ưu cho người làm việc văn phòng.",
+      "noiDungTinTuc": "<h2>Sức khỏe toàn diện</h2><p>Làm việc văn phòng 8 tiếng/ngày ảnh hưởng lớn đến sức khỏe. Bài viết cung cấp giải pháp toàn diện từ huấn luyện viên và chuyên gia dinh dưỡng.</p><h3>Chương trình bao gồm:</h3><ul><li>Workout 30 phút tại nhà</li><li>Thực đơn 7 ngày giảm mỡ tăng cơ</li><li>Stretching exercises cho văn phòng</li><li>Supplement guide - Thực phẩm bổ sung</li><li>Sleep optimization - Tối ưu giấc ngủ</li></ul><p>Video hướng dẫn chi tiết, app tracking và meal prep guide.</p>",
+      "trangThaiDuyet": true,
+      "isPremium": true,
+      "gia": 55000,
+      "author": "author1",
+      "danhMucs": ["Sức khỏe"],
+      "tags": ["độc quyền", "hot"]
     }
   ]
 }
