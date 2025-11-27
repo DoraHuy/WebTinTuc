@@ -1,4 +1,4 @@
-import { PrismaClient } from '../lib/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as bcrypt from 'bcrypt';
@@ -47,7 +47,7 @@ async function main() {
   // 3. Gán permissions cho vai trò
   console.log('📝 Gán permissions cho vai trò...');
   const now = new Date();
-  
+
   // Admin có tất cả permissions
   for (const permKey of Object.keys(permissionMap)) {
     await prisma.vaiTroPermision.upsert({
@@ -110,7 +110,7 @@ async function main() {
   // 4. Tạo Danh mục
   console.log('📝 Tạo danh mục...');
   const danhMucMap: { [key: string]: number } = {};
-  
+
   async function createDanhMuc(dm: any, parentId: number | null = null) {
     const danhMuc = await prisma.danhMucs.upsert({
       where: { tenDanhMuc: dm.tenDanhMuc },
@@ -151,11 +151,11 @@ async function main() {
   // 6. Tạo Tài khoản và Người dùng
   console.log('📝 Tạo tài khoản và người dùng...');
   const nguoiDungMap: { [key: string]: number } = {};
-  
+
   for (const tk of seedData.taiKhoans) {
     // Hash mật khẩu
     const hashedPassword = await bcrypt.hash(tk.matKhau, 10);
-    
+
     // Tạo tài khoản
     const taiKhoan = await prisma.taiKhoan.upsert({
       where: { taiKhoan: tk.taiKhoan },

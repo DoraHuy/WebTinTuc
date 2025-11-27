@@ -1,4 +1,3 @@
-
 import {
   getFeaturedPost,
   getLatestPosts,
@@ -10,17 +9,17 @@ import {
 } from '@/lib/data/homepage-data';
 import HomePageClient from './HomePageClient';
 
-export default function Home() {
-  // Server-side data fetching
-  const featuredPost = getFeaturedPost();
-  const latestPosts = getLatestPosts(4);
-  const initialPosts = getPosts({ limit: 10, offset: 0 });
-  const categories = getCategories();
-  const topAuthors = getTopAuthors('posts', 5);
-  const topInteractions = getTopAuthors('interactions', 5);
-  const topRevenue = getTopAuthors('revenue', 5);
-  const trendingPosts = getTrendingPosts(5);
-  const totalPosts = getTotalPosts();
+export default async function Home() {
+  // Lấy dữ liệu trực tiếp từ Database (Server-side)
+  const featuredPost = await getFeaturedPost();
+  const latestPosts = await getLatestPosts(4);
+  const initialPosts = await getPosts({ limit: 10, offset: 0 });
+  const categories = await getCategories();
+  const topAuthors = await getTopAuthors('posts', 5);
+  const topInteractions = await getTopAuthors('interactions', 5);
+  const topRevenue = await getTopAuthors('revenue', 5);
+  const trendingPosts = await getTrendingPosts(5);
+  const totalPosts = await getTotalPosts();
 
   return (
     <HomePageClient

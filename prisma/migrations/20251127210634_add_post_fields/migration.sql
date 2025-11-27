@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE `tintucs` ADD COLUMN `isPremium` BOOLEAN NOT NULL DEFAULT false,
+    ADD COLUMN `likeCount` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `premiumType` VARCHAR(191) NULL,
+    ADD COLUMN `thumbnail` VARCHAR(191) NULL,
+    ADD COLUMN `viewCount` INTEGER NOT NULL DEFAULT 0;

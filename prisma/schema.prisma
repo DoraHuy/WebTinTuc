@@ -5,15 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../lib/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
 
 model TaiKhoan {
   id           Int     @id @default(autoincrement())
@@ -108,21 +106,32 @@ model KhoLuuTin {
   tinTuc       TinTucs[]
 }
 
+// prisma/schema.prisma
+
 model TinTucs {
-  id               Int         @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   tenTinTuc        String
-  noiDungTinTuc    String      @db.LongText
-  thoiGianDang     DateTime    @default(now())
+  noiDungTinTuc    String    @db.LongText
+  thoiGianDang     DateTime  @default(now())
   trangThaiDuyet   Boolean?
-  ngayDang         DateTime    @default(now())
+  ngayDang         DateTime  @default(now())
   thoiGianChinhSua DateTime?
-  tomTat           String?     @db.MediumText
-  maNguoiDung      Int
-  nguoiDung        NguoiDungs  @relation(fields: [maNguoiDung], references: [id])
-  danhMuc          DanhMucs[]
-  binhLuan         BinhLuans[]
-  tags             Tags[]
-  khoLuuTin        KhoLuuTin[]
+  tomTat           String?   @db.MediumText
+
+  // --- CÁC TRƯỜNG MỚI THÊM ĐỂ KHỚP VỚI UI ---
+  thumbnail   String? // Link ảnh đại diện bài viết
+  isPremium   Boolean @default(false) // Bài viết có tính phí không
+  premiumType String? // Loại premium: 'paid' | 'rewrite'
+  viewCount   Int     @default(0) // Số lượt xem
+  likeCount   Int     @default(0) // Số lượt thích
+  // ------------------------------------------
+
+  maNguoiDung Int
+  nguoiDung   NguoiDungs  @relation(fields: [maNguoiDung], references: [id])
+  danhMuc     DanhMucs[]
+  binhLuan    BinhLuans[]
+  tags        Tags[]
+  khoLuuTin   KhoLuuTin[]
 }
 
 model BinhLuans {
