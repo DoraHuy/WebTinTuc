@@ -38,6 +38,11 @@ export default function ManageRedeemCodesPage() {
 
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  // Redeem code usage state
+  const [redeemCode, setRedeemCode] = useState("");
+  const [redeemLoading, setRedeemLoading] = useState(false);
+  const [redeemMessage, setRedeemMessage] = useState<{ type: "success" | "error"; text: string; postId?: number } | null>(null);
+
   useEffect(() => {
     // TODO: Get userId from session/auth
     const mockUserId = 1; // Replace with actual auth
@@ -145,6 +150,75 @@ export default function ManageRedeemCodesPage() {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
+  const handleRedeemCode = async () => {
+    if (!redeemCode.trim()) {
+      setRedeemMessage({ type: "error", text: "Vui lòng nhập mã redeem" });
+      return;
+    }
+
+    // Check authentication
+    const checkAuth = await fetch('/api/auth/me');
+    if (!checkAuth.ok) {
+      setRedeemMessage({ type: "error", text: "⚠️ Vui lòng đăng nhập để sử dụng mã redeem" });
+      setTimeout(() => {
+        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+      }, 1500);
+      return;
+    }
+
+    const authData = await checkAuth.json();
+    const currentUserId = authData.id;
+
+    setRedeemLoading(true);
+    setRedeemMessage(null);
+
+    try {
+      const res = await fetch("/api/redeem", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: currentUserId,
+          code: redeemCode.trim(),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        if (data.result.type === "post") {
+          setRedeemMessage({
+            type: "success",
+            text: `✅ Sử dụng mã thành công! Bạn đã được quyền đọc bài: "${data.result.value}"`,
+            postId: data.result.postId,
+          });
+          setRedeemCode("");
+          // Reload codes list in case it was created by this user
+          if (userId) fetchCodes(userId);
+        } else if (data.result.type === "balance") {
+          setRedeemMessage({
+            type: "success",
+            text: `✅ Nạp tiền thành công! Bạn đã nhận ${data.result.value.toLocaleString("vi-VN")} đ vào ví`,
+          });
+          setRedeemCode("");
+        } else if (data.result.type === "unlimited") {
+          setRedeemMessage({
+            type: "success",
+            text: `🎉 ${data.result.message} Bạn có thể đọc TẤT CẢ bài premium!`,
+          });
+          setRedeemCode("");
+        }
+      } else {
+        setRedeemMessage({ type: "error", text: data.error || "Có lỗi xảy ra" });
+      }
+    } catch (error) {
+      setRedeemMessage({ type: "error", text: "Có lỗi xảy ra khi sử dụng mã" });
+    } finally {
+      setRedeemLoading(false);
+    }
+  };
+
   const getCodeTypeLabel = (type: string) => {
     switch (type) {
       case "single_post":
@@ -174,13 +248,21 @@ export default function ManageRedeemCodesPage() {
             <Gift className="w-8 h-8 mr-3 text-purple-600" />
             Quản lý mã Redeem
           </h1>
-          <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Tạo mã mới
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Tạo mã mới
+            </button>
+            <a href="/" className="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Trang chủ
+            </a>
+          </div>
         </div>
 
         {/* Message */}
@@ -195,6 +277,58 @@ export default function ManageRedeemCodesPage() {
             {message.text}
           </div>
         )}
+
+        {/* Use Redeem Code Section */}
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg shadow p-6 mb-8 border-2 border-purple-200 dark:border-purple-700">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
+            <Gift className="w-6 h-6 mr-2 text-purple-600" />
+            Sử dụng mã Redeem
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Nhập mã để mở khóa bài viết premium hoặc nhận tiền vào ví
+          </p>
+          
+          {redeemMessage && (
+            <div
+              className={`p-4 rounded-lg mb-4 ${
+                redeemMessage.type === "success"
+                  ? "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300"
+                  : "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300"
+              }`}
+            >
+              {redeemMessage.text}
+              {redeemMessage.postId && (
+                <div className="mt-2">
+                  <a
+                    href={`/posts/${redeemMessage.postId}`}
+                    className="inline-block px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium"
+                  >
+                    📖 Đọc bài ngay
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={redeemCode}
+              onChange={(e) => setRedeemCode(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleRedeemCode()}
+              placeholder="Nhập mã redeem..."
+              disabled={redeemLoading}
+              className="flex-1 px-4 py-3 border-2 border-purple-300 dark:border-purple-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:bg-gray-700 disabled:opacity-50 font-mono"
+            />
+            <button
+              onClick={handleRedeemCode}
+              disabled={redeemLoading}
+              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            >
+              {redeemLoading ? "Đang xử lý..." : "Sử dụng mã"}
+            </button>
+          </div>
+        </div>
 
         {/* Create Form */}
         {showCreateForm && (

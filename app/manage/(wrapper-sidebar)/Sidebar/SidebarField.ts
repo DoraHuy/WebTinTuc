@@ -6,6 +6,9 @@ import {
     FileText,
     BarChart3,
     Settings,
+    FileCheck,
+    LayoutDashboard,
+    Gift,
     type LucideIcon
 } from 'lucide-react';
 export interface SidebarItem {
@@ -21,42 +24,42 @@ export interface SidebarGroup {
 
 export const SidebarConfig: SidebarGroup[] = [
     {
-        title: "Thống kê",
+        title: "Tổng quan",
         items: [
             {
-                href: "/manage/tong-bai-viet",
-                label: "Tổng số bài viết",
-                icon: Newspaper,
-            },
-            {
-                href: "/manage/nguoi-dung",
-                label: "Người dùng",
-                icon: Users
-            },
-            {
-                href: "/manage/luot-xem",
-                label: "Lượt xem trang",
-                icon: Eye,
+                href: "/manage",
+                label: "Dashboard",
+                icon: LayoutDashboard,
             },
         ],
     },
     {
-        title: "Tương tác",
+        title: "Quản lý nội dung",
         items: [
             {
-                href: "/manage/luot-thich",
-                label: "Số lượt thích",
-                icon: ThumbsUp,
-            },
-            {
-                href: "/manage/article",
-                label: "Bài Viết",
+                href: "/manage/posts",
+                label: "Bài viết",
                 icon: FileText,
             },
+            {
+                href: "/manage/posts/approve",
+                label: "Duyệt bài viết",
+                icon: FileCheck,
+            },
         ],
     },
     {
-        title: "Hệ thống",
+        title: "Tài chính",
+        items: [
+            {
+                href: "/manage/redeem",
+                label: "Mã giảm giá",
+                icon: Gift,
+            },
+        ],
+    },
+    {
+        title: "Thống kê",
         items: [
             {
                 href: "/manage/analytics",
@@ -64,9 +67,9 @@ export const SidebarConfig: SidebarGroup[] = [
                 icon: BarChart3,
             },
             {
-                href: "/manage/settings",
-                label: "Cài đặt",
-                icon: Settings,
+                href: "/manage/users",
+                label: "Người dùng",
+                icon: Users,
             },
         ],
     },

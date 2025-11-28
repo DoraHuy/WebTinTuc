@@ -1,7 +1,5 @@
 import { Post, Author, Category, Tag, TopAuthor, TrendingPost } from '@/lib/types/Homepage';
-import { PrismaClient } from '@/lib/generated/prisma';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function getHomepageData() {
   const [posts, categories, tags, authors] = await Promise.all([

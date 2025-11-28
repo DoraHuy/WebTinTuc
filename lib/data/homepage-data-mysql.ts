@@ -1,7 +1,21 @@
-import { Post, Author, Category, Tag, TopAuthor, TrendingPost } from '@/lib/types/Homepage';
-import { PrismaClient } from '@/lib/generated/prisma';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+// Helper: safely run a prisma call and return fallback when DB is unavailable
+async function safe<T>(p: Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await p;
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'production') {
+      const raw = (e as Error)?.message || String(e);
+      // Ẩn port (vd: `localhost`:`3306`) khỏi log để gọn gàng
+      const sanitized = raw
+        .replace(/`localhost`:`\d+`/g, '`localhost`')
+        .replace(/:\d+/g, '');
+      console.warn('[DB Dự phòng]', sanitized);
+    }
+    return fallback;
+  }
+}
 
 export async function getPosts(options?: {
   limit?: number;
@@ -23,7 +37,8 @@ export async function getPosts(options?: {
   
   let orderBy: any = { ngayDang: 'desc' };
   
-  const posts = await prisma.tinTucs.findMany({
+  const posts = await safe(
+    prisma.tinTucs.findMany({
     where,
     orderBy,
     skip: offset,
@@ -33,7 +48,9 @@ export async function getPosts(options?: {
       danhMuc: true,
       tags: true,
     },
-  });
+    }),
+    []
+  );
   
   return posts.map(post => ({
     id: post.id,
@@ -74,9 +91,12 @@ export async function getLatestPosts(limit: number = 4): Promise<any[]> {
 }
 
 export async function getCategories(): Promise<any[]> {
-  const categories = await prisma.danhMucs.findMany({
+  const categories = await safe(
+    prisma.danhMucs.findMany({
     where: { parentId: null }
-  });
+    }),
+    []
+  );
   
   return categories.map(cat => ({
     id: cat.id,
@@ -86,7 +106,7 @@ export async function getCategories(): Promise<any[]> {
 }
 
 export async function getTags(): Promise<any[]> {
-  const tags = await prisma.tags.findMany();
+  const tags = await safe(prisma.tags.findMany(), [] as any[]);
   return tags.map(tag => ({
     id: tag.id,
     tenTag: tag.tenTag,
@@ -94,13 +114,16 @@ export async function getTags(): Promise<any[]> {
 }
 
 export async function getTopAuthors(type: 'posts' | 'interactions' | 'revenue', limit: number = 5): Promise<any[]> {
-  const authors = await prisma.nguoiDungs.findMany({
+  const authors = await safe(
+    prisma.nguoiDungs.findMany({
     include: {
       tinTuc: {
         where: { trangThaiDuyet: true }
       },
     },
-  });
+    }),
+    []
+  );
   
   const authorsWithStats = authors.map((author, index) => ({
     id: author.id,
@@ -143,18 +166,21 @@ export async function getTotalPosts(filters?: {
     };
   }
   
-  return prisma.tinTucs.count({ where });
+  return await safe(prisma.tinTucs.count({ where }), 0);
 }
 
 export async function getPostById(id: number): Promise<any | null> {
-  const post = await prisma.tinTucs.findUnique({
+  const post = await safe(
+    prisma.tinTucs.findUnique({
     where: { id },
     include: {
       nguoiDung: true,
       danhMuc: true,
       tags: true,
     },
-  });
+    }),
+    null
+  );
   
   if (!post) return null;
   

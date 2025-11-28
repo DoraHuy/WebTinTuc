@@ -20,7 +20,7 @@ interface PendingPost {
     };
 }
 
-export default function AdminApprovePage() {
+export default function ManageApprovePage() {
     const [posts, setPosts] = useState<PendingPost[]>([]);
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState<number | null>(null);
@@ -34,16 +34,22 @@ export default function AdminApprovePage() {
 
     const fetchPendingPosts = async () => {
         try {
-            const response = await fetch("/api/admin/posts/approve");
+            console.log("🔍 Fetching pending posts...");
+            const response = await fetch("/api/manage/posts/approve");
+            console.log("📡 Response status:", response.status);
+            
             const data = await response.json();
+            console.log("📦 Response data:", data);
             
             if (response.ok) {
+                console.log("✅ Setting posts:", data.posts);
                 setPosts(data.posts);
             } else {
+                console.error("❌ Error response:", data);
                 error(data.error || "Không thể tải danh sách");
             }
         } catch (err) {
-            console.error("Error fetching posts:", err);
+            console.error("💥 Error fetching posts:", err);
             error("Lỗi kết nối");
         } finally {
             setLoading(false);
@@ -67,7 +73,7 @@ export default function AdminApprovePage() {
 
         setProcessing(submissionId);
         try {
-            const response = await fetch("/api/admin/posts/approve", {
+            const response = await fetch("/api/manage/posts/approve", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -103,7 +109,7 @@ export default function AdminApprovePage() {
 
         setProcessing(submissionId);
         try {
-            const response = await fetch("/api/admin/posts/approve", {
+            const response = await fetch("/api/manage/posts/approve", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -144,20 +150,15 @@ export default function AdminApprovePage() {
     }
 
     return (
-        <div className="container mx-auto max-w-7xl p-6">
+        <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold mb-2">Duyệt bài viết</h1>
-                    <p className="text-muted-foreground">Quản lý và duyệt bài viết chờ phê duyệt</p>
-                </div>
-                <Link href="/" className="text-sm text-primary hover:underline">
-                    ← Về trang chủ
-                </Link>
+            <div>
+                <h1 className="text-3xl font-bold mb-2">Duyệt bài viết</h1>
+                <p className="text-muted-foreground">Quản lý và duyệt bài viết chờ phê duyệt</p>
             </div>
 
             {/* Statistics */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-card border rounded-lg p-4">
                     <div className="flex items-center justify-between">
                         <div>
@@ -188,7 +189,7 @@ export default function AdminApprovePage() {
             </div>
 
             {/* Filter */}
-            <div className="flex items-center gap-2 mb-6">
+            <div className="flex items-center gap-2">
                 <Filter className="w-5 h-5 text-muted-foreground" />
                 <span className="text-sm font-medium">Lọc:</span>
                 <Button
@@ -223,7 +224,7 @@ export default function AdminApprovePage() {
             ) : (
                 <div className="space-y-6">
                     {filteredPosts.map((post) => (
-                        <div key={post.id} className="bg-card border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">w-sm hover:shadow-md transition-shadow">
+                        <div key={post.id} className="bg-card border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="flex-1">
                                     <div className="flex items-start gap-3 mb-2">
@@ -243,7 +244,7 @@ export default function AdminApprovePage() {
                                     </div>
                                 </div>
                                 
-                                <div className="flex-shrink-0">className="flex-shrink-0">
+                                <div className="flex-shrink-0">
                                     {post.isPremium ? (
                                         <span className="px-3 py-1.5 bg-gradient-to-r from-yellow-500 to-amber-500 text-white rounded-full text-xs font-bold shadow-md">
                                             ⭐ PREMIUM

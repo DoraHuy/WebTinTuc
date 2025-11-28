@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/lib/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 
 // POST - Sử dụng mã redeem
 export async function POST(req: NextRequest) {
@@ -188,9 +187,26 @@ export async function POST(req: NextRequest) {
 
         return { type: "balance", value: redeemCode.giaTri, balance: updatedWallet.soDu };
       } else if (redeemCode.loaiCode === "unlimited") {
-        // Unlimited access - có thể implement logic đặc biệt ở đây
-        // Ví dụ: cấp premium membership, v.v.
-        return { type: "unlimited", message: "Unlimited access granted" };
+        // Unlimited access - Ghi nhận người dùng có quyền đọc unlimited
+        // Ghi lại usage
+        await tx.redeemCodeUsage.create({
+          data: {
+            maCode: redeemCode.id,
+            maNguoiDung: parseInt(userId),
+          },
+        });
+
+        // Cập nhật số lần dùng
+        await tx.redeemCode.update({
+          where: { id: redeemCode.id },
+          data: {
+            daDung: {
+              increment: 1,
+            },
+          },
+        });
+
+        return { type: "unlimited", message: "Bạn đã có quyền đọc VÔ HẠN tất cả bài premium!" };
       }
 
       throw new Error("Invalid code type");

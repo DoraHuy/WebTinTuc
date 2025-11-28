@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/lib/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 
 // POST: Gửi bài viết mới để đọc (chờ duyệt)
 export async function POST(request: NextRequest) {
@@ -56,6 +55,14 @@ export async function GET(request: NextRequest) {
         const submissions = await prisma.postSubmission.findMany({
             where: {
                 maNguoiDung: parseInt(userId),
+            },
+            include: {
+                redeemCode: {
+                    select: {
+                        code: true,
+                        loaiCode: true,
+                    },
+                },
             },
             orderBy: {
                 ngayGui: "desc",

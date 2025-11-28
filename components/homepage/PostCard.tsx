@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Clock, Eye, MessageCircle, Heart, Crown } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import AddToCartButton from '@/components/AddToCartButton';
 
 interface PostCardProps {
   post: Post;
@@ -10,7 +11,9 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, variant = 'default' }: PostCardProps) {
-  const formattedDate = formatDistanceToNow(new Date(post.ngayDang), {
+  if (!post) return null;
+  const dateValue = post.ngayDang ? new Date(post.ngayDang) : new Date();
+  const formattedDate = formatDistanceToNow(dateValue, {
     addSuffix: true,
     locale: vi,
   });
@@ -128,6 +131,11 @@ export function PostCard({ post, variant = 'default' }: PostCardProps) {
               {post.commentCount || 0}
             </span>
           </div>
+          {post.isPremium && (
+            <div className="p-3 border-t mt-2">
+              <AddToCartButton postId={post.id} price={post.gia || 0} />
+            </div>
+          )}
         </div>
       </Link>
     );

@@ -33,14 +33,6 @@ export function Header() {
 
         <div className="flex items-center gap-4">
           <ModeToggle />
-          <div className="hidden md:flex items-center gap-2">
-            <Link href="/login">
-              <Button variant="ghost">Đăng nhập</Button>
-            </Link>
-            <Link href="/register">
-              <Button>Đăng ký</Button>
-            </Link>
-          </div>
           
           <Button
             variant="ghost"
@@ -65,14 +57,6 @@ export function Header() {
             <Link href="/TacGia/Posts" className="text-sm font-medium transition-colors hover:text-foreground/80">
               Tác giả
             </Link>
-            <div className="flex gap-2 pt-2 border-t">
-              <Link href="/login" className="flex-1">
-                <Button variant="ghost" className="w-full">Đăng nhập</Button>
-              </Link>
-              <Link href="/register" className="flex-1">
-                <Button className="w-full">Đăng ký</Button>
-              </Link>
-            </div>
           </nav>
         </div>
       )}

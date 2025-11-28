@@ -43,23 +43,25 @@ export function ChatboxAI() {
 
     try {
       // --------------------------------------
-      const GROQ_API_KEY = "---------------------------";
+      const GROQ_API_KEY = process.env.NEXT_PUBLIC_GROQ_API_KEY || "";
 
       const { getHomepageData } = await import('@/lib/data/homepage-data');
       const websiteData = await getHomepageData();
 
-      const postsContext = websiteData.posts
-        .map((post: any, idx: number) => 
-          `${idx + 1}. [ID:${post.id}] "${post.title}" (${post.category}) - ${post.excerpt}`
-        )
+      const postsContext = (websiteData.posts || [])
+        .map((post: any, idx: number) => {
+          const cats = Array.isArray(post.danhMuc) ? post.danhMuc.map((c: any) => c.tenDanhMuc).join(', ') : 'Khác';
+          const excerpt = post.tomTat || (post.noiDungTinTuc ? String(post.noiDungTinTuc).slice(0, 120) + '…' : '');
+          return `${idx + 1}. [ID:${post.id}] "${post.tenTinTuc}" (${cats}) - ${excerpt}`;
+        })
         .join('\n');
 
-      const categoriesContext = websiteData.categories
-        .map((cat: any) => cat.name)
+      const categoriesContext = (websiteData.categories || [])
+        .map((cat: any) => cat.tenDanhMuc)
         .join(', ');
 
-      const authorsContext = websiteData.authors
-        .map((author: any) => `${author.name} (${author.posts} bài viết)`)
+      const authorsContext = (websiteData.authors || [])
+        .map((author: any) => `${author.tenNguoiDung}`)
         .join(', ');
 
       const systemPrompt = `Bạn là trợ lý AI của website TechNews - nền tảng tin tức công nghệ.
@@ -82,6 +84,9 @@ ${postsContext}
 6. Luôn dựa vào dữ liệu thực tế, KHÔNG bịa đặt thông tin
 7. Trả lời ngắn gọn, thân thiện, đúng trọng tâm`;
 
+      if (!GROQ_API_KEY) {
+        throw new Error("Thiếu GROQ API key. Vui lòng cấu hình NEXT_PUBLIC_GROQ_API_KEY trong .env");
+      }
       const response = await fetch(
         "https://api.groq.com/openai/v1/chat/completions",
         {

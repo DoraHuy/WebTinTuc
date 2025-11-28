@@ -66,6 +66,14 @@ export default function CheckoutPage() {
   const handleCheckout = async () => {
     if (!userId) return;
 
+    if (paymentMethod === "wallet" && !canPayWithWallet) {
+      setMessage({ 
+        type: "error", 
+        text: `Số dư không đủ! Cần ${totalPrice.toLocaleString("vi-VN")}đ nhưng chỉ có ${(wallet?.soDu || 0).toLocaleString("vi-VN")}đ. Vui lòng nạp thêm tiền.` 
+      });
+      return;
+    }
+
     setProcessing(true);
     setMessage(null);
 
@@ -84,7 +92,11 @@ export default function CheckoutPage() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage({ type: "success", text: "Thanh toán thành công!" });
+        const newBalance = (wallet?.soDu || 0) - totalPrice;
+        setMessage({ 
+          type: "success", 
+          text: `✅ Thanh toán thành công ${cartItems.length} bài viết! Số dư còn lại: ${newBalance.toLocaleString("vi-VN")}đ` 
+        });
         setTimeout(() => {
           router.push("/purchased");
         }, 2000);
@@ -160,25 +172,54 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Thanh toán</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Thanh toán</h1>
+        <a href="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          Trang chủ
+        </a>
+      </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Payment Methods */}
         <div className="lg:col-span-2 space-y-6">
           {/* Wallet Balance */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className={`rounded-lg shadow p-6 ${
+            canPayWithWallet 
+              ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-2 border-green-200 dark:border-green-800'
+              : 'bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20 border-2 border-red-200 dark:border-red-800'
+          }`}>
             <h2 className="text-xl font-bold mb-4">Số dư ví</h2>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-2">
               <span className="text-gray-600 dark:text-gray-400">Số dư hiện tại:</span>
-              <span className="text-2xl font-bold text-green-600">
+              <span className={`text-2xl font-bold ${canPayWithWallet ? 'text-green-600' : 'text-red-600'}`}>
                 {wallet?.soDu.toLocaleString("vi-VN") || 0} đ
               </span>
             </div>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-gray-600 dark:text-gray-400">Cần thanh toán:</span>
+              <span className="text-xl font-bold text-blue-600">
+                {totalPrice.toLocaleString("vi-VN")} đ
+              </span>
+            </div>
+            {!canPayWithWallet && (
+              <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-800 dark:text-red-200 font-medium">
+                  ⚠️ Thiếu: {(totalPrice - (wallet?.soDu || 0)).toLocaleString("vi-VN")} đ
+                </p>
+              </div>
+            )}
             <button
               onClick={() => router.push("/wallet")}
-              className="mt-4 w-full py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition"
+              className={`w-full py-3 rounded-lg font-semibold transition ${
+                canPayWithWallet
+                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : 'bg-red-600 hover:bg-red-700 text-white animate-pulse'
+              }`}
             >
-              Nạp tiền
+              {canPayWithWallet ? '💰 Nạp thêm tiền' : '⚠️ Nạp tiền ngay'}
             </button>
           </div>
 

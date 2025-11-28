@@ -1,8 +1,7 @@
-import { PrismaClient } from '@/lib/generated/prisma';
+import { prisma } from '@/lib/prisma';
 import AuthorProfileClient from './AuthorProfileClient';
 import { notFound } from 'next/navigation';
 
-const prisma = new PrismaClient();
 
 export default async function AuthorProfilePage({
   params,

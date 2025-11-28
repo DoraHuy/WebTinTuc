@@ -1,41 +1,8 @@
-export const dynamic = "force-dynamic";
-import Link from "next/link";
-
-async function getCart() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/api/cart`, { cache: 'no-store' });
-  if (!res.ok) return { items: [] };
-  return res.json();
-}
-
-export default async function CartPage() {
-  const data = await getCart();
-  const items = Array.isArray(data?.items) ? data.items : [];
-  return (
-    <div className="container mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-4">Giỏ hàng của bạn</h1>
-      {items.length === 0 ? (
-        <p>Giỏ hàng trống. <Link href="/" className="text-primary">Quay lại Trang chủ</Link></p>
-      ) : (
-        <div className="space-y-3">
-          {items.map((it: any) => (
-            <div key={it.id} className="p-3 border rounded flex items-center justify-between">
-              <div>
-                <p className="font-medium">Bài viết #{it.maTinTuc}</p>
-                <p className="text-sm text-muted-foreground">Thêm lúc: {new Date(it.ngayThem).toLocaleString()}</p>
-              </div>
-              <form action={`/api/cart?id=${it.id}`} method="post">
-                <input type="hidden" name="_method" value="DELETE" />
-                <button className="px-3 py-1 rounded bg-destructive text-destructive-foreground">Xóa</button>
-              </form>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 "use client";
 
+export const dynamic = "force-dynamic";
+
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
@@ -73,7 +40,7 @@ export default function CartPage() {
       const res = await fetch(`/api/cart?userId=${uid}`);
       if (res.ok) {
         const data = await res.json();
-        setCartItems(data);
+        setCartItems(Array.isArray(data) ? data : data?.items ?? []);
       }
     } catch (error) {
       console.error("Error fetching cart:", error);
@@ -91,7 +58,7 @@ export default function CartPage() {
       });
 
       if (res.ok) {
-        setCartItems(cartItems.filter((item) => item.maTinTuc !== postId));
+        setCartItems((prev) => prev.filter((item) => item.maTinTuc !== postId));
       }
     } catch (error) {
       console.error("Error removing from cart:", error);
@@ -115,10 +82,16 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Giỏ hàng của bạn</h1>
-
-      {cartItems.length === 0 ? (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Giỏ hàng của bạn</h1>
+          <a href="/" className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            Trang chủ
+          </a>
+        </div>      {cartItems.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-xl text-gray-600 dark:text-gray-400 mb-4">
             Giỏ hàng của bạn đang trống

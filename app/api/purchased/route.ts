@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/lib/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 
 // GET - Kiểm tra quyền truy cập bài viết premium
 export async function GET(req: NextRequest) {
@@ -37,11 +36,22 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Kiểm tra người dùng có phải tác giả không
-    if (post.maNguoiDung === parseInt(userId)) {
+    // Kiểm tra người dùng có mã unlimited không (đã sử dụng mã unlimited)
+    const unlimitedAccess = await prisma.redeemCodeUsage.findFirst({
+      where: {
+        maNguoiDung: parseInt(userId),
+        redeemCode: {
+          loaiCode: "unlimited",
+          trangThai: true, // Mã còn hoạt động
+        },
+      },
+    });
+
+    if (unlimitedAccess) {
       return NextResponse.json({
         hasAccess: true,
-        reason: "author",
+        reason: "unlimited",
+        message: "Bạn có quyền đọc vô hạn từ mã redeem",
       });
     }
 

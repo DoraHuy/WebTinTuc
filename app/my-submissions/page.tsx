@@ -57,11 +57,18 @@ export default function MySubmissionsPage() {
         <div className="container mx-auto max-w-6xl p-6">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">Bài viết đã gửi</h1>
+                <div className="flex gap-2">
                 <Link href="/posts/submit">
                     <Button className="bg-green-600 hover:bg-green-700">
                         + Đăng bài mới
                     </Button>
                 </Link>
+                <Link href="/">
+                    <Button variant="outline">
+                        🏠 Trang chủ
+                    </Button>
+                </Link>
+                </div>
             </div>
 
             {submissions.length === 0 ? (

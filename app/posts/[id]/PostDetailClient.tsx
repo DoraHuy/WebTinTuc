@@ -40,6 +40,9 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
   const [checkingAccess, setCheckingAccess] = useState(post.isPremium);
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
+  const [redeemCode, setRedeemCode] = useState('');
+  const [redeemLoading, setRedeemLoading] = useState(false);
+  const [redeemMessage, setRedeemMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Kiểm tra quyền truy cập bài viết premium
   useEffect(() => {
@@ -50,8 +53,16 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
 
   const checkAccess = async () => {
     try {
-      // TODO: Lấy userId từ session thật
-      const userId = 1; 
+      // Lấy userId từ session
+      const authRes = await fetch('/api/auth/me');
+      if (!authRes.ok) {
+        setHasAccess(false);
+        setShowPremium(true);
+        setCheckingAccess(false);
+        return;
+      }
+      const userData = await authRes.json();
+      const userId = userData.id;
       const res = await fetch(`/api/purchased?userId=${userId}&postId=${post.id}`);
       if (res.ok) {
         const data = await res.json();
@@ -125,6 +136,54 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
     // Mở khóa khi nhập đúng mật khẩu "HUANDZ"
     if (password.toUpperCase() === 'HUANDZ') {
       setShowPremium(false);
+    }
+  };
+
+  const handleRedeemCode = async () => {
+    if (!redeemCode.trim()) {
+      setRedeemMessage({ type: 'error', text: 'Vui lòng nhập mã code' });
+      return;
+    }
+
+    // Kiểm tra đăng nhập
+    const checkAuth = await fetch('/api/auth/me');
+    if (!checkAuth.ok) {
+      setRedeemMessage({ type: 'error', text: '⚠️ Vui lòng đăng nhập để sử dụng mã' });
+      setTimeout(() => {
+        window.location.href = '/login?redirect=/posts/' + post.id;
+      }, 1500);
+      return;
+    }
+
+    setRedeemLoading(true);
+    setRedeemMessage(null);
+
+    try {
+      const userData = await checkAuth.json();
+      const userId = userData.id;
+      const res = await fetch('/api/redeem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, code: redeemCode.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setRedeemMessage({ type: 'success', text: data.message || 'Sử dụng mã thành công!' });
+        setRedeemCode('');
+        // Refresh access check
+        setTimeout(() => {
+          checkAccess();
+          window.location.reload();
+        }, 1500);
+      } else {
+        setRedeemMessage({ type: 'error', text: data.error || 'Mã không hợp lệ' });
+      }
+    } catch (error) {
+      setRedeemMessage({ type: 'error', text: 'Lỗi khi sử dụng mã' });
+    } finally {
+      setRedeemLoading(false);
     }
   };
 
@@ -239,12 +298,21 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
               <div>
                 <h3 className="text-xl font-bold mb-2">Bài viết Premium</h3>
                 <p className="text-muted-foreground">
-                  Đây là bài viết cao cấp. Bạn có thể mua trực tiếp hoặc đăng bài để nhận mã code đọc miễn phí!
+                  Đây là bài viết cao cấp. Bạn có thể mua trực tiếp, dùng mã code, hoặc đăng bài để nhận mã miễn phí!
                 </p>
+                <p className="text-sm text-amber-700 dark:text-amber-300 mt-2">
+                  <strong>📌 Lưu ý:</strong> Tác giả cũng phải mua/dùng mã để đọc bài premium của người khác. 
+                  Chỉ được xem miễn phí ở trang "Bài đã gửi" → "Bài đã duyệt".
+                </p>
+                <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <p className="text-sm text-blue-900 dark:text-blue-100">
+                    🔐 <strong>Bạn cần đăng nhập</strong> để mua bài, sử dụng mã code, hoặc đăng bài nhận mã miễn phí.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-3 gap-4">
               {/* Option 1: Mua trực tiếp */}
               <div className="bg-white dark:bg-gray-900 rounded-lg p-5 border-2 border-transparent hover:border-primary transition-all">
                 <div className="flex items-center gap-3 mb-3">
@@ -267,7 +335,51 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
                 />
               </div>
 
-              {/* Option 2: Đăng bài để đọc */}
+              {/* Option 2: Nhập mã Redeem */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-5 border-2 border-purple-500/30">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">🎁</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold">Dùng mã Redeem</h4>
+                    <p className="text-sm font-semibold text-purple-600 dark:text-purple-400">CÓ MÃ RỒI</p>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Đã có mã? Nhập ngay để đọc miễn phí
+                </p>
+                
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={redeemCode}
+                    onChange={(e) => setRedeemCode(e.target.value.toUpperCase())}
+                    placeholder="Nhập mã code..."
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:border-gray-700"
+                    disabled={redeemLoading}
+                  />
+                  <button
+                    onClick={handleRedeemCode}
+                    disabled={redeemLoading || !redeemCode.trim()}
+                    className="w-full px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {redeemLoading ? 'Đang xử lý...' : 'Sử dụng mã'}
+                  </button>
+                  
+                  {redeemMessage && (
+                    <div className={`text-xs p-2 rounded ${
+                      redeemMessage.type === 'success' 
+                        ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
+                        : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
+                    }`}>
+                      {redeemMessage.text}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Option 3: Đăng bài để đọc */}
               <div className="bg-white dark:bg-gray-900 rounded-lg p-5 border-2 border-transparent hover:border-green-500 transition-all">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">

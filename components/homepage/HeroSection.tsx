@@ -3,7 +3,7 @@ import { PostCard } from './PostCard';
 import { TrendingUp, Sparkles } from 'lucide-react';
 
 interface HeroSectionProps {
-  featuredPost: Post;
+  featuredPost: Post | null;
   latestPosts: Post[];
 }
 
@@ -17,7 +17,13 @@ export function HeroSection({ featuredPost, latestPosts }: HeroSectionProps) {
             <Sparkles className="w-5 h-5 text-primary" />
             <h2 className="text-2xl font-bold">Nổi bật</h2>
           </div>
-          <PostCard post={featuredPost} variant="featured" />
+          {featuredPost ? (
+            <PostCard post={featuredPost} variant="featured" />
+          ) : (
+            <div className="border rounded-xl p-6 text-muted-foreground">
+              Chưa có bài viết nổi bật.
+            </div>
+          )}
         </div>
 
         {/* Latest Posts */}
@@ -27,7 +33,7 @@ export function HeroSection({ featuredPost, latestPosts }: HeroSectionProps) {
             <h2 className="text-2xl font-bold">Mới nhất</h2>
           </div>
           <div className="space-y-4">
-            {latestPosts.map((post) => (
+            {(latestPosts || []).map((post) => (
               <PostCard key={post.id} post={post} variant="compact" />
             ))}
           </div>

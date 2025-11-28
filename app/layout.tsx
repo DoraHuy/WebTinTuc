@@ -38,34 +38,6 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <header className="border-b bg-card/50 backdrop-blur-sm">
-            <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-              <Link href="/" className="font-semibold">TechNews</Link>
-              
-              {session ? (
-                <div className="flex items-center gap-4">
-                  <span className="text-sm">Xin chào, <strong>{session.tenNguoiDung}</strong></span>
-                  <form action="/api/auth/logout" method="POST">
-                    <button 
-                      type="submit"
-                      className="px-4 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90"
-                    >
-                      Đăng xuất
-                    </button>
-                  </form>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <Link href="/login" className="px-4 py-2 text-sm border rounded-md hover:bg-accent">
-                    Đăng nhập
-                  </Link>
-                  <Link href="/register" className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-                    Đăng ký
-                  </Link>
-                </div>
-              )}
-            </div>
-          </header>
           {children}
         </ThemeProvider>
       </body>

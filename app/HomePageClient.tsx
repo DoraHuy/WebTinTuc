@@ -12,10 +12,10 @@ import { ChatboxAI } from '@/components/ChatboxAI';
 import { FilterOptions, PaginationInfo, Post, Category, TopAuthor, TrendingPost } from '@/lib/types/Homepage';
 import CartIcon from '@/components/CartIcon';
 import { ModeToggle } from '@/components/ModeToggle';
-import { Wallet, ShoppingBag, User, FileEdit, List } from 'lucide-react';
+import { Wallet, ShoppingBag, User, FileEdit, List, Shield } from 'lucide-react';
 
 interface HomePageClientProps {
-  featuredPost: Post;
+  featuredPost: Post | null;
   latestPosts: Post[];
   initialPosts: Post[];
   categories: Category[];
@@ -24,6 +24,7 @@ interface HomePageClientProps {
   topRevenue: TopAuthor[];
   trendingPosts: TrendingPost[];
   totalPosts: number;
+  session: { userId: number; tenNguoiDung: string; email: string } | null;
 }
 
 export default function HomePageClient({
@@ -36,6 +37,7 @@ export default function HomePageClient({
   topRevenue,
   trendingPosts,
   totalPosts,
+  session,
 }: HomePageClientProps) {
   const [filters, setFilters] = useState<FilterOptions>({
     sortBy: 'latest',
@@ -127,6 +129,10 @@ export default function HomePageClient({
                 <List className="w-4 h-4" />
                 Bài đã gửi
               </Link>
+              <Link href="/manage" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
+                <Shield className="w-4 h-4" />
+                Quản lý
+              </Link>
               
               {/* Cart Icon */}
               <CartIcon userId={1} />
@@ -135,15 +141,37 @@ export default function HomePageClient({
               <ModeToggle />
               
               {/* Login/Profile */}
-              <div className="flex items-center gap-2">
-                <Link href="/login" className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium text-sm hover:shadow-lg transition-all">
-                  <User className="w-4 h-4" />
-                  Đăng nhập
-                </Link>
-                <Link href="/register" className="flex items-center gap-2 px-4 py-2 border-2 border-primary text-primary rounded-lg font-medium text-sm hover:bg-primary hover:text-primary-foreground transition-all">
-                  Đăng ký
-                </Link>
-              </div>
+              {session ? (
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-lg">
+                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">
+                      {session.tenNguoiDung.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold">{session.tenNguoiDung}</span>
+                      <span className="text-xs text-muted-foreground">{session.email}</span>
+                    </div>
+                  </div>
+                  <form action="/api/auth/logout" method="POST">
+                    <button 
+                      type="submit"
+                      className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg font-medium text-sm hover:bg-destructive/90 transition-all"
+                    >
+                      Đăng xuất
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link href="/login" className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium text-sm hover:shadow-lg transition-all">
+                    <User className="w-4 h-4" />
+                    Đăng nhập
+                  </Link>
+                  <Link href="/register" className="flex items-center gap-2 px-4 py-2 border-2 border-primary text-primary rounded-lg font-medium text-sm hover:bg-primary hover:text-primary-foreground transition-all">
+                    Đăng ký
+                  </Link>
+                </div>
+              )}
             </nav>
           </div>
         </div>
@@ -258,8 +286,8 @@ export default function HomePageClient({
         </div>
       </footer>
 
-      {/* AI Chatbox */}
-      <ChatboxAI />
+      {/* AI Chatbox - Chỉ hiện khi đã đăng nhập */}
+      {session && <ChatboxAI />}
     </div>
   );
 }

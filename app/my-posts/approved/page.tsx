@@ -13,16 +13,49 @@ interface ApprovedPost {
     ngayGui: string;
     ngayDuyet: string;
     ghiChu?: string;
+    maCodeTao?: number;
+    redeemCode?: {
+        code: string;
+        loaiCode: string;
+    };
 }
 
 export default function ApprovedPostsPage() {
     const [posts, setPosts] = useState<ApprovedPost[]>([]);
     const [loading, setLoading] = useState(true);
-    const userId = 1; // Tạm hardcode
+    const [copiedCode, setCopiedCode] = useState<string | null>(null);
+    const [userId, setUserId] = useState<number | null>(null);
+
+    const copyToClipboard = (code: string) => {
+        navigator.clipboard.writeText(code);
+        setCopiedCode(code);
+        setTimeout(() => setCopiedCode(null), 2000);
+    };
 
     useEffect(() => {
-        fetchApprovedPosts();
+        fetchUserId();
     }, []);
+
+    useEffect(() => {
+        if (userId) {
+            fetchApprovedPosts();
+        }
+    }, [userId]);
+
+    const fetchUserId = async () => {
+        try {
+            const response = await fetch("/api/auth/me");
+            if (response.ok) {
+                const data = await response.json();
+                setUserId(data.user.id);
+            } else {
+                window.location.href = "/login";
+            }
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            window.location.href = "/login";
+        }
+    };
 
     const fetchApprovedPosts = async () => {
         try {
@@ -53,11 +86,18 @@ export default function ApprovedPostsPage() {
                         Các bài viết của bạn đã được admin phê duyệt và có thể đọc tự do
                     </p>
                 </div>
-                <Link href="/my-submissions">
-                    <Button variant="outline">
-                        ← Quay lại
-                    </Button>
-                </Link>
+                <div className="flex gap-2">
+                    <Link href="/my-submissions">
+                        <Button variant="outline">
+                            ← Quay lại
+                        </Button>
+                    </Link>
+                    <Link href="/">
+                        <Button variant="outline">
+                            🏠 Trang chủ
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
@@ -131,20 +171,39 @@ export default function ApprovedPostsPage() {
                                     </div>
                                 )}
 
+                                {!post.isPremium && post.redeemCode && (
+                                    <div className="mb-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 rounded-lg border-2 border-purple-200 dark:border-purple-700">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-xs font-semibold text-purple-700 dark:text-purple-300">
+                                                🎁 MÃ ĐỌC VÔ HẠN
+                                            </span>
+                                            <span className="text-xs text-purple-600 dark:text-purple-400">
+                                                Tất cả bài premium
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <code className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 rounded border border-purple-300 dark:border-purple-600 font-mono text-sm font-bold text-purple-900 dark:text-purple-200">
+                                                {post.redeemCode.code}
+                                            </code>
+                                            <button
+                                                onClick={() => copyToClipboard(post.redeemCode!.code)}
+                                                className="px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition text-xs font-medium whitespace-nowrap"
+                                            >
+                                                {copiedCode === post.redeemCode.code ? "✓ Đã copy" : "📋 Copy"}
+                                            </button>
+                                        </div>
+                                        <p className="text-xs text-purple-600 dark:text-purple-400 mt-2">
+                                            💡 Dùng mã này tại <a href="/manage/redeem" className="underline font-semibold">trang redeem</a> để đọc mọi bài premium
+                                        </p>
+                                    </div>
+                                )}
+
                                 <div className="flex items-center gap-2">
                                     <div className="flex-1 px-3 py-2 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded text-xs text-center">
                                         <span className="font-semibold text-green-700 dark:text-green-300">
                                             ✅ Đọc được tự do
                                         </span>
                                     </div>
-                                    
-                                    {!post.isPremium && (
-                                        <div className="flex-1 px-3 py-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded text-xs text-center">
-                                            <span className="font-semibold text-blue-700 dark:text-blue-300">
-                                                🎁 Nhận mã code
-                                            </span>
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         </div>

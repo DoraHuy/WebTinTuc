@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { getSession } from '@/lib/auth/session';
 
 export default async function Home() {
-  const session = getSession();
+  const session = await getSession();
   // Server-side data fetching từ MySQL
   const [
     featuredPost,
@@ -48,6 +48,7 @@ export default async function Home() {
       topRevenue={topRevenue}
       trendingPosts={trendingPosts}
       totalPosts={totalPosts}
+      session={session}
     />
   );
 }

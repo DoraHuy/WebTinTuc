@@ -26,7 +26,15 @@ export default function BuyButton({
   }
 
   const handleAddToCart = async () => {
-    // Backend sẽ xác định user từ cookie session
+    // Kiểm tra đăng nhập
+    const checkAuth = await fetch('/api/auth/me');
+    if (!checkAuth.ok) {
+      setMessage('⚠️ Vui lòng đăng nhập để thêm vào giỏ hàng');
+      setTimeout(() => {
+        window.location.href = '/login?redirect=/posts/' + postId;
+      }, 1500);
+      return;
+    }
 
     setLoading(true);
     setMessage(null);
@@ -60,20 +68,32 @@ export default function BuyButton({
   };
 
   const handlePurchase = async () => {
+    // Kiểm tra đăng nhập
+    const checkAuth = await fetch('/api/auth/me');
+    if (!checkAuth.ok) {
+      setMessage('⚠️ Vui lòng đăng nhập để mua bài viết');
+      setTimeout(() => {
+        window.location.href = '/login?redirect=/posts/' + postId;
+      }, 1500);
+      return;
+    }
+
     setLoading(true);
     setMessage(null);
     try {
+      const userData = await checkAuth.json();
+      const userId = userData.id;
       const res = await fetch('/api/purchase', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId }),
+        body: JSON.stringify({ postId, userId }),
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage('Mua thành công!');
+        setMessage(`✅ ${data.message || 'Mua thành công!'} Số dư mới: ${data.newBalance?.toLocaleString('vi-VN')}đ`);
         setTimeout(() => {
-          router.refresh();
-        }, 800);
+          window.location.reload();
+        }, 1500);
       } else {
         setMessage(data.error || 'Không thể mua bài viết');
       }
