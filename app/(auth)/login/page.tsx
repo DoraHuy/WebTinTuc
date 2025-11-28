@@ -7,7 +7,7 @@ const LoginPage = () => {
         <>
             <div className="register flex w-screen h-screen bg-[#9079547d] text-white">
                 <div className="regiger__left w-[60%] flex flex-col justify-center gap-2 ">
-                    <h2 className='text-left text-4xl ml-8 capitalize text-shadow-2xs italic'>Chào mừng đến với Web Tin tức anime</h2>
+                    <h2 className='text-left text-4xl ml-8 capitalize text-shadow-2xs italic'>Chào mừng đến với Web Tin tức công nghệ</h2>
                     <Image src={"/images/hinh-anh-web-2.jpg"} alt='hình ảnh web' width={300} height={300} quality={100} className='w-[80%] border-4 rounded-2xl shadow-2xl border-[#614a2547] h-auto mx-auto mt-2'></Image>
                 </div>
 

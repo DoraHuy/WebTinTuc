@@ -47,6 +47,9 @@ export async function getPosts(options?: {
   const { limit = 10, offset = 0, categoryId, isPremium, sortBy = 'latest' } = options || {};
 
   const where: any = {};
+  /*const where: any = {
+    trangThaiDuyet: true, // <--- THÊM DÒNG NÀY: Chỉ lấy bài đã duyệt
+  };*/
   if (categoryId) where.danhMuc = { some: { id: categoryId } };
   if (isPremium !== undefined) where.isPremium = isPremium;
 
