@@ -13,9 +13,15 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { RegisterBody, RegisterBodyType } from "@/validate/validationAuth"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 
 const RegisterForm = () => {
+    const router = useRouter()
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+
     const form = useForm<RegisterBodyType>({
         resolver: zodResolver(RegisterBody),
         defaultValues: {
@@ -26,8 +32,34 @@ const RegisterForm = () => {
         },
     })
 
-    function onSubmit(values: RegisterBodyType) {
-        console.log(values)
+    async function onSubmit(values: RegisterBodyType) {
+        setLoading(true)
+        setError(null)
+        try {
+            // (auth) là group segment -> URL thực tế: /api/register
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(values)
+            })
+            let data: any = null
+            const ct = res.headers.get('content-type') || ''
+            if (ct.includes('application/json')) {
+                data = await res.json()
+            } else {
+                const text = await res.text()
+                if (!res.ok) throw new Error(text || 'Đăng ký thất bại')
+            }
+            if (!res.ok) {
+                throw new Error(data?.error || 'Đăng ký thất bại')
+            }
+            // Thành công: chuyển sang trang đăng nhập
+            router.push('/login')
+        } catch (e) {
+            setError(e instanceof Error ? e.message : 'Có lỗi xảy ra')
+        } finally {
+            setLoading(false)
+        }
     }
     return (
         <Form {...form}>
@@ -92,14 +124,14 @@ const RegisterForm = () => {
                     )}
                 />
 
-                <Button type="submit" className="bg-[#967f59] w-full hover:bg-[#70562c]">Đăng ký</Button>
-                
-                <div className="text-center text-sm mt-4">
-                    <span className="text-gray-700">Đã có tài khoản? </span>
-                    <a href="/login" className="text-blue-600 hover:text-blue-800 font-semibold underline">
-                        Đăng nhập ngay
-                    </a>
-                </div>
+                {error && (
+                    <div className="text-red-500 text-sm text-center p-2 bg-red-50 dark:bg-red-900/20 rounded">
+                        {error}
+                    </div>
+                )}
+                <Button type="submit" disabled={loading} className="bg-[#967f59] w-full hover:bg-[#70562c]">
+                    {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+                </Button>
             </form>
         </Form>
     )

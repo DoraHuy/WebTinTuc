@@ -9,8 +9,11 @@ import {
   getTotalPosts,
 } from '@/lib/data/homepage-data-mysql';
 import HomePageClient from './HomePageClient';
+import Link from 'next/link';
+import { getSession } from '@/lib/auth/session';
 
 export default async function Home() {
+  const session = getSession();
   // Server-side data fetching từ MySQL
   const [
     featuredPost,

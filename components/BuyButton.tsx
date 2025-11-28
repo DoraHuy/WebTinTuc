@@ -8,7 +8,6 @@ interface BuyButtonProps {
   postId: number;
   price: number;
   isPremium: boolean;
-  userId?: number;
   hasAccess?: boolean;
 }
 
@@ -16,7 +15,6 @@ export default function BuyButton({
   postId,
   price,
   isPremium,
-  userId,
   hasAccess = false,
 }: BuyButtonProps) {
   const [loading, setLoading] = useState(false);
@@ -28,10 +26,7 @@ export default function BuyButton({
   }
 
   const handleAddToCart = async () => {
-    if (!userId) {
-      router.push("/login");
-      return;
-    }
+    // Backend sẽ xác định user từ cookie session
 
     setLoading(true);
     setMessage(null);
@@ -43,7 +38,6 @@ export default function BuyButton({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId,
           postId,
         }),
       });
@@ -64,6 +58,31 @@ export default function BuyButton({
       setLoading(false);
     }
   };
+
+  const handlePurchase = async () => {
+    setLoading(true);
+    setMessage(null);
+    try {
+      const res = await fetch('/api/purchase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage('Mua thành công!');
+        setTimeout(() => {
+          router.refresh();
+        }, 800);
+      } else {
+        setMessage(data.error || 'Không thể mua bài viết');
+      }
+    } catch {
+      setMessage('Có lỗi xảy ra');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="space-y-3">
@@ -89,6 +108,14 @@ export default function BuyButton({
         >
           <ShoppingCart className="w-5 h-5" />
           {loading ? "Đang xử lý..." : "Thêm vào giỏ hàng"}
+        </button>
+
+        <button
+          onClick={handlePurchase}
+          disabled={loading}
+          className="mt-2 w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Mua ngay
         </button>
       </div>
 

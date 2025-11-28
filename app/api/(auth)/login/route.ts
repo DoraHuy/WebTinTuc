@@ -36,7 +36,32 @@ export async function POST(req: NextRequest) {
             return NextResponse.json("Mật khẩu không khớp", { status: 400 })
         }
 
-        return NextResponse.json("Đăng nhập thành công", { status: 200 })
+        // Lấy thông tin người dùng
+        const user = await prisma.nguoiDungs.findFirst({ where: { tk: taiKhoan } });
+
+        // Tạo cookie phiên đăng nhập đơn giản
+        const res = NextResponse.json({
+            message: "Đăng nhập thành công",
+            user: {
+                id: user?.id,
+                tk: taiKhoan,
+                tenNguoiDung: user?.tenNguoiDung || taiKhoan,
+                email: user?.email,
+            }
+        }, { status: 200 });
+
+        res.cookies.set("session", JSON.stringify({
+            userId: user?.id,
+            tk: taiKhoan,
+            tenNguoiDung: user?.tenNguoiDung || taiKhoan,
+        }), {
+            httpOnly: true,
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7, // 7 days
+            sameSite: "lax",
+        });
+
+        return res;
     } catch (error) {
         console.log(error);
         return NextResponse.json({ error: "Yêu cầu không phù hợp" }, { status: 500 })

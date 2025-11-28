@@ -43,7 +43,7 @@ export function ChatboxAI() {
 
     try {
       // --------------------------------------
-      const GROQ_API_KEY = "--------------";
+      const GROQ_API_KEY = "---------------------------";
 
       const { getHomepageData } = await import('@/lib/data/homepage-data');
       const websiteData = await getHomepageData();

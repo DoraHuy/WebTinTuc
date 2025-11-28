@@ -9,27 +9,37 @@ export async function POST(req: NextRequest) {
         const validation = await RegisterBody.safeParse(data)
 
         if (!validation.success) {
-            return NextResponse.json(validation.error, { status: 400, statusText: "Lỗi nhập sai dữ liệu" })
+            return NextResponse.json({ error: "Lỗi nhập sai dữ liệu", details: validation.error }, { status: 400 })
         }
 
         const { taiKhoan, email, password } = await validation.data;
 
+        // Kiểm tra tồn tại
+        const existed = await prisma.taiKhoan.findUnique({ where: { taiKhoan } });
+        const existedEmail = await prisma.nguoiDungs.findUnique({ where: { email } });
+        if (existed || existedEmail) {
+            return NextResponse.json({ error: "Tài khoản hoặc email đã tồn tại" }, { status: 400 });
+        }
+
+        // Tạo tài khoản + người dùng liên kết
         const newUserAdmin = await prisma.taiKhoan.create({
             data: {
-                taiKhoan: taiKhoan,
+                taiKhoan,
                 matKhau: password,
-                NguoiDungs: {
+                nguoiDung: {
                     create: {
-                        email: email
-                    }
-                }
+                        tenNguoiDung: taiKhoan,
+                        email,
+                        // Không set `tk` ở nested create; Prisma tự liên kết qua relation
+                    },
+                },
             },
             include: {
-                NguoiDungs: true
-            }
-        })
+                nguoiDung: true,
+            },
+        });
 
-        return NextResponse.json(newUserAdmin, { status: 201, statusText: "Tạo mới thành công" })
+        return NextResponse.json({ message: "Tạo mới thành công", user: newUserAdmin }, { status: 201 })
     } catch (error) {
         console.log(error);
         return NextResponse.json({ error: "Lỗi server" }, { status: 500 })

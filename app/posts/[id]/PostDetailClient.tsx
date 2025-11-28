@@ -39,20 +39,7 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
   const [hasAccess, setHasAccess] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(post.isPremium);
   const [newComment, setNewComment] = useState('');
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: 1,
-      author: 'Nguyễn Văn A',
-      content: 'Bài viết rất hay và bổ ích! Cảm ơn tác giả đã chia sẻ.',
-      timestamp: new Date('2024-11-19T10:30:00'),
-    },
-    {
-      id: 2,
-      author: 'Trần Thị B',
-      content: 'Thông tin rất chi tiết và dễ hiểu. Đánh giá 5 sao!',
-      timestamp: new Date('2024-11-19T11:15:00'),
-    },
-  ]);
+  const [comments, setComments] = useState<Comment[]>([]);
 
   // Kiểm tra quyền truy cập bài viết premium
   useEffect(() => {
@@ -88,17 +75,50 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
     }
   };
 
-  const handleComment = () => {
-    if (newComment.trim()) {
-      const comment: Comment = {
-        id: comments.length + 1,
-        author: 'Bạn',
-        content: newComment,
-        timestamp: new Date(),
-      };
-      setComments([...comments, comment]);
-      setNewComment('');
-    }
+  useEffect(() => {
+    // Load comments from API
+    const load = async () => {
+      try {
+        const res = await fetch(`/api/comments?postId=${post.id}`, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          const mapped: Comment[] = (data.comments || []).map((c: any) => ({
+            id: c.id,
+            author: c.nguoiDung?.tenNguoiDung || 'Ẩn danh',
+            content: c.noiDungBinhLuan,
+            timestamp: new Date(c.ngayBinhLuan),
+          }));
+          setComments(mapped);
+        }
+      } catch {}
+    };
+    load();
+  }, [post.id]);
+
+  const handleComment = async () => {
+    if (!newComment.trim()) return;
+    try {
+      const res = await fetch('/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId: post.id, content: newComment.trim() })
+      });
+      if (res.ok) {
+        setNewComment('');
+        // reload comments
+        const list = await fetch(`/api/comments?postId=${post.id}`, { cache: 'no-store' });
+        if (list.ok) {
+          const data = await list.json();
+          const mapped: Comment[] = (data.comments || []).map((c: any) => ({
+            id: c.id,
+            author: c.nguoiDung?.tenNguoiDung || 'Ẩn danh',
+            content: c.noiDungBinhLuan,
+            timestamp: new Date(c.ngayBinhLuan),
+          }));
+          setComments(mapped);
+        }
+      }
+    } catch {}
   };
 
   const handleUnlockPremium = (password: string) => {
@@ -243,7 +263,6 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
                   postId={post.id}
                   price={post.gia || 0}
                   isPremium={post.isPremium}
-                  userId={1}
                   hasAccess={hasAccess}
                 />
               </div>

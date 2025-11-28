@@ -1,3 +1,39 @@
+export const dynamic = "force-dynamic";
+import Link from "next/link";
+
+async function getCart() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/api/cart`, { cache: 'no-store' });
+  if (!res.ok) return { items: [] };
+  return res.json();
+}
+
+export default async function CartPage() {
+  const data = await getCart();
+  const items = Array.isArray(data?.items) ? data.items : [];
+  return (
+    <div className="container mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-4">Giỏ hàng của bạn</h1>
+      {items.length === 0 ? (
+        <p>Giỏ hàng trống. <Link href="/" className="text-primary">Quay lại Trang chủ</Link></p>
+      ) : (
+        <div className="space-y-3">
+          {items.map((it: any) => (
+            <div key={it.id} className="p-3 border rounded flex items-center justify-between">
+              <div>
+                <p className="font-medium">Bài viết #{it.maTinTuc}</p>
+                <p className="text-sm text-muted-foreground">Thêm lúc: {new Date(it.ngayThem).toLocaleString()}</p>
+              </div>
+              <form action={`/api/cart?id=${it.id}`} method="post">
+                <input type="hidden" name="_method" value="DELETE" />
+                <button className="px-3 py-1 rounded bg-destructive text-destructive-foreground">Xóa</button>
+              </form>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 "use client";
 
 import { useState, useEffect } from "react";

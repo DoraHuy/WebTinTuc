@@ -34,6 +34,7 @@ const LoginForm = () => {
         setError("")
         
         try {
+            // (auth) là group segment -> URL thực tế: /api/login
             const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
