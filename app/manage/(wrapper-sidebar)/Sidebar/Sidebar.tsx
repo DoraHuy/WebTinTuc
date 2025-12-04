@@ -12,7 +12,7 @@ interface ToggleSidebar {
 export function Sidebar({ isCollapsed }: ToggleSidebar) {
     return (
         <nav className={clsx(
-            "space-y-6 h-screen flex-col justify-start py-4 bg-[#bcac93] text-white transition-all duration-300",
+            "space-y-6 h-screen flex-col justify-start py-4 bg-[#14243a] text-white transition-all duration-300",
             "hidden md:flex",
             isCollapsed ? "w-20 px-2" : "w-64 px-4"
         )}>
