@@ -29,11 +29,28 @@ export default function PurchasedPostsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // TODO: Get userId from session/auth
-    const mockUserId = 1; // Replace with actual auth
-    setUserId(mockUserId);
-    fetchPurchasedPosts(mockUserId);
+    fetchUserId();
   }, []);
+
+  const fetchUserId = async () => {
+    try {
+      const response = await fetch("/api/auth/me");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.authenticated && data.user) {
+          setUserId(data.user.userId);
+          fetchPurchasedPosts(data.user.userId);
+        } else {
+          window.location.href = "/login";
+        }
+      } else {
+        window.location.href = "/login";
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      window.location.href = "/login";
+    }
+  };
 
   const fetchPurchasedPosts = async (uid: number) => {
     try {

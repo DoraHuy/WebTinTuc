@@ -101,47 +101,41 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        // BƯỚC 2: Tạo mã code nếu bài viết là FREE (không phải premium)
-        let redeemCode = null;
-        let newCodeId = null;
+        // BƯỚC 2: Tạo mã code cho mọi bài viết (cả FREE và PREMIUM)
+        const generateCode = () => {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let code = "";
+            for (let i = 0; i < 10; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        };
 
-        if (!submission.isPremium) {
-            // Bài FREE sẽ nhận được mã code
-            const generateCode = () => {
-                const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                let code = "";
-                for (let i = 0; i < 10; i++) {
-                    code += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                return code;
-            };
+        let redeemCode = generateCode();
+        
+        // Kiểm tra trùng code
+        let existingCode = await prisma.redeemCode.findUnique({
+            where: { code: redeemCode },
+        });
 
+        while (existingCode) {
             redeemCode = generateCode();
-            
-            // Kiểm tra trùng code
-            let existingCode = await prisma.redeemCode.findUnique({
+            existingCode = await prisma.redeemCode.findUnique({
                 where: { code: redeemCode },
             });
-
-            while (existingCode) {
-                redeemCode = generateCode();
-                existingCode = await prisma.redeemCode.findUnique({
-                    where: { code: redeemCode },
-                });
-            }
-
-            // Tạo redeem code - cho phép đọc BẤT KỲ bài premium nào
-            const newCode = await prisma.redeemCode.create({
-                data: {
-                    code: redeemCode,
-                    loaiCode: "unlimited", // Code dùng nhiều lần
-                    giaTri: 0, // Không giới hạn
-                    soLanDung: 999999, // Dùng nhiều lần
-                    nguoiTao: submission.maNguoiDung,
-                },
-            });
-            newCodeId = newCode.id;
         }
+
+        // Tạo redeem code - chỉ mở được bài này, dùng 1 lần
+        const newCode = await prisma.redeemCode.create({
+            data: {
+                code: redeemCode,
+                loaiCode: "single_post", // Chỉ cho 1 bài cụ thể
+                giaTri: newPost.id, // ID của bài viết được mở
+                soLanDung: 1, // Chỉ dùng 1 lần
+                nguoiTao: submission.maNguoiDung,
+            },
+        });
+        const newCodeId = newCode.id;
 
         // BƯỚC 3: Cập nhật submission
         await prisma.postSubmission.update({
@@ -156,9 +150,7 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json({
-            message: submission.isPremium 
-                ? "Đã duyệt bài viết premium (không tạo code)"
-                : "Đã duyệt bài viết FREE và tạo mã code đọc premium",
+            message: "Đã duyệt bài viết và tạo mã code (dùng 1 lần)",
             code: redeemCode,
             postId: newPost.id, // ID bài viết mới tạo
             submission: { id: submissionId, isPremium: submission.isPremium },

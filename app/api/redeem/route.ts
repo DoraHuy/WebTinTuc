@@ -5,7 +5,11 @@ import { prisma } from "@/lib/prisma";
 // POST - Sử dụng mã redeem
 export async function POST(req: NextRequest) {
   try {
-    const { userId, code } = await req.json();
+    const body = await req.json();
+    const userIdRaw = body?.userId;
+    const codeRaw = body?.code;
+    const userId = typeof userIdRaw === 'string' ? parseInt(userIdRaw, 10) : userIdRaw;
+    const code = typeof codeRaw === 'string' ? codeRaw.trim().toUpperCase() : '';
 
     if (!userId || !code) {
       return NextResponse.json(

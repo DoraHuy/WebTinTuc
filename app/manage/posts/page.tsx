@@ -1,48 +1,38 @@
-"use client";
+import { prisma } from '@/lib/prisma';
+import PostsManageClient from './PostsManageClient';
 
-import { usePosts } from "@/app/CustomHook/UsePosts";
-import Paginations from "@/app/manage/components/Paginations";
-import PostQuery from "@/app/manage/posts/PostQuery";
-import PostsTable from "@/app/manage/posts/PostsTable";
+export const dynamic = 'force-dynamic';
 
-const PostPage = () => {
-    const { posts, error, isLoading } = usePosts();
-    const renderContent = () => {
+export default async function PostPage() {
+  const [posts, categories, users] = await Promise.all([
+    prisma.tinTucs.findMany({
+      include: {
+        nguoiDung: true,
+        danhMuc: true,
+        tags: true,
+      },
+      orderBy: { ngayDang: 'desc' },
+    }),
+    prisma.danhMucs.findMany({ orderBy: { tenDanhMuc: 'asc' } }),
+    prisma.nguoiDungs.findMany({ orderBy: { tenNguoiDung: 'asc' } }),
+  ]);
 
-        if (isLoading) {
-            return (
-                <>
-                    <div className="m-auto">
-                        Đang tải dữ liệu
-                    </div>
-                </>
-            )
-        }
+  const serialized = posts.map(p => ({
+    id: p.id,
+    tenTinTuc: p.tenTinTuc,
+    tomTat: p.tomTat || '',
+    noiDungTinTuc: p.noiDungTinTuc,
+    ngayDang: p.ngayDang.toISOString(),
+    isPremium: p.isPremium,
+    gia: p.gia || 0,
+    trangThaiDuyet: p.trangThaiDuyet,
+    nguoiDung: { id: p.maNguoiDung, tenNguoiDung: p.nguoiDung.tenNguoiDung },
+    danhMuc: p.danhMuc.map(dm => ({ id: dm.id, tenDanhMuc: dm.tenDanhMuc })),
+    tags: p.tags.map(t => ({ id: t.id, tenTag: t.tenTag })),
+  }));
 
-        if (error) {
-            return (
-                <>
-                    <div className="m-auto">
-                        Lỗi
-                    </div>
-                </>
-            )
-        }
+  const categoriesData = categories.map(c => ({ id: c.id, tenDanhMuc: c.tenDanhMuc }));
+  const usersData = users.map(u => ({ id: u.id, tenNguoiDung: u.tenNguoiDung }));
 
-        return (
-            <PostsTable
-                data={posts}
-            />
-        );
-    };
-
-    return (
-        <div className="flex flex-col gap-5">
-            <PostQuery data={posts} />
-            {renderContent()}
-            <Paginations />
-        </div>
-    );
-};
-
-export default PostPage;
+  return <PostsManageClient posts={serialized} categories={categoriesData} users={usersData} />;
+}

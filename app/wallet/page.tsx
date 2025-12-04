@@ -27,11 +27,24 @@ export default function WalletPage() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
-    // TODO: Get userId from session/auth
-    const mockUserId = 1; // Replace with actual auth
-    setUserId(mockUserId);
-    fetchWallet(mockUserId);
+    fetchUserId();
   }, []);
+
+  const fetchUserId = async () => {
+    try {
+      const response = await fetch("/api/auth/me");
+      const data = await response.json();
+      if (data.authenticated && data.user?.userId) {
+        setUserId(data.user.userId);
+        fetchWallet(data.user.userId);
+      } else {
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      router.push("/login");
+    }
+  };
 
   const fetchWallet = async (uid: number) => {
     try {

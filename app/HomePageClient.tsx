@@ -135,7 +135,7 @@ export default function HomePageClient({
               </Link>
               
               {/* Cart Icon */}
-              <CartIcon userId={1} />
+              {session && <CartIcon userId={session.userId} />}
               
               {/* Theme Toggle */}
               <ModeToggle />

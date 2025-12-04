@@ -39,21 +39,25 @@ export async function POST(req: NextRequest) {
         // Lấy thông tin người dùng
         const user = await prisma.nguoiDungs.findFirst({ where: { tk: taiKhoan } });
 
+        if (!user) {
+            return NextResponse.json({ error: "Không tìm thấy thông tin người dùng" }, { status: 404 });
+        }
+
         // Tạo cookie phiên đăng nhập đơn giản
         const res = NextResponse.json({
             message: "Đăng nhập thành công",
             user: {
-                id: user?.id,
+                id: user.id,
                 tk: taiKhoan,
-                tenNguoiDung: user?.tenNguoiDung || taiKhoan,
-                email: user?.email,
+                tenNguoiDung: user.tenNguoiDung || taiKhoan,
+                email: user.email,
             }
         }, { status: 200 });
 
         res.cookies.set("session", JSON.stringify({
-            userId: user?.id,
+            userId: user.id,
             tk: taiKhoan,
-            tenNguoiDung: user?.tenNguoiDung || taiKhoan,
+            tenNguoiDung: user.tenNguoiDung || taiKhoan,
         }), {
             httpOnly: true,
             path: "/",

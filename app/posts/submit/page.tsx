@@ -15,7 +15,6 @@ export default function SubmitPostPage() {
         noiDung: "",
         hinhAnh: "",
         isPremium: false,
-        maNguoiDung: 1, // Tạm thời hardcode, sau này lấy từ session
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -23,10 +22,23 @@ export default function SubmitPostPage() {
         setLoading(true);
 
         try {
+            // Lấy userId từ session
+            const authRes = await fetch("/api/auth/me");
+            const authData = await authRes.json();
+            
+            if (!authData.authenticated || !authData.user?.userId) {
+                alert("⚠️ Vui lòng đăng nhập để đăng bài");
+                router.push("/login");
+                return;
+            }
+
             const response = await fetch("/api/posts/submit", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    maNguoiDung: authData.user.userId,
+                }),
             });
 
             const data = await response.json();

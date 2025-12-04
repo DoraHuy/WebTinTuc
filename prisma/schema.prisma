@@ -218,18 +218,19 @@ model Payment {
 
 // Mã giảm giá / Redeem code
 model RedeemCode {
-  id            Int       @id @default(autoincrement())
-  code          String    @unique
-  loaiCode      String    // single_post, unlimited, balance
-  giaTri        Int       // Giá trị: ID bài viết hoặc số tiền
-  soLanDung     Int       @default(1)
-  daDung        Int       @default(0)
-  ngayTao       DateTime  @default(now())
+  id            Int              @id @default(autoincrement())
+  code          String           @unique
+  loaiCode      String           // single_post, balance
+  giaTri        Int              // Giá trị: ID bài viết hoặc số tiền
+  soLanDung     Int              @default(1)
+  daDung        Int              @default(0)
+  ngayTao       DateTime         @default(now())
   ngayHetHan    DateTime?
   nguoiTao      Int
-  creator       NguoiDungs @relation(fields: [nguoiTao], references: [id])
-  trangThai     Boolean   @default(true)
+  creator       NguoiDungs       @relation(fields: [nguoiTao], references: [id])
+  trangThai     Boolean          @default(true)
   usedBy        RedeemCodeUsage[]
+  postSubmission PostSubmission? @relation("PostSubmissionCode")
 }
 
 // Lịch sử dùng code
@@ -281,16 +282,17 @@ model PurchasedPost {
 
 // Bài viết chờ duyệt
 model PostSubmission {
-  id              Int      @id @default(autoincrement())
+  id              Int          @id @default(autoincrement())
   tieuDe          String
-  noiDung         String   @db.LongText
+  noiDung         String       @db.LongText
   hinhAnh         String?
-  isPremium       Boolean  @default(false)
+  isPremium       Boolean      @default(false)
   maNguoiDung     Int
-  nguoiDung       NguoiDungs @relation(fields: [maNguoiDung], references: [id])
-  trangThai       String   @default("pending") // pending, approved, rejected
-  maCodeTao       Int?
-  ngayGui         DateTime @default(now())
+  nguoiDung       NguoiDungs   @relation(fields: [maNguoiDung], references: [id])
+  trangThai       String       @default("pending") // pending, approved, rejected
+  maCodeTao       Int?         @unique
+  redeemCode      RedeemCode?  @relation("PostSubmissionCode", fields: [maCodeTao], references: [id])
+  ngayGui         DateTime     @default(now())
   ngayDuyet       DateTime?
   nguoiDuyet      Int?
   ghiChu          String?

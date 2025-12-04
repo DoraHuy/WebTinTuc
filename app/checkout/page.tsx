@@ -30,11 +30,24 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // TODO: Get userId from session/auth
-    const mockUserId = 1; // Replace with actual auth
-    setUserId(mockUserId);
-    fetchData(mockUserId);
+    fetchUserId();
   }, []);
+
+  const fetchUserId = async () => {
+    try {
+      const response = await fetch("/api/auth/me");
+      const data = await response.json();
+      if (data.authenticated && data.user?.userId) {
+        setUserId(data.user.userId);
+        fetchData(data.user.userId);
+      } else {
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      router.push("/login");
+    }
+  };
 
   const fetchData = async (uid: number) => {
     try {

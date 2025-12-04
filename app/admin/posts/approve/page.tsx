@@ -26,11 +26,24 @@ export default function AdminApprovePage() {
     const [processing, setProcessing] = useState<number | null>(null);
     const [filter, setFilter] = useState<'all' | 'free' | 'premium'>('all');
     const { toasts, showToast, removeToast, success, error } = useToast();
-    const adminId = 1; // Tạm hardcode
+    const [adminId, setAdminId] = useState<number | null>(null);
 
     useEffect(() => {
-        fetchPendingPosts();
+        fetchAdminId();
     }, []);
+
+    const fetchAdminId = async () => {
+        try {
+            const response = await fetch("/api/auth/me");
+            const data = await response.json();
+            if (data.authenticated && data.user?.userId) {
+                setAdminId(data.user.userId);
+                fetchPendingPosts();
+            }
+        } catch (error) {
+            console.error("Error fetching admin:", error);
+        }
+    };
 
     const fetchPendingPosts = async () => {
         try {

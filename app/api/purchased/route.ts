@@ -36,25 +36,6 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Kiểm tra người dùng có mã unlimited không (đã sử dụng mã unlimited)
-    const unlimitedAccess = await prisma.redeemCodeUsage.findFirst({
-      where: {
-        maNguoiDung: parseInt(userId),
-        redeemCode: {
-          loaiCode: "unlimited",
-          trangThai: true, // Mã còn hoạt động
-        },
-      },
-    });
-
-    if (unlimitedAccess) {
-      return NextResponse.json({
-        hasAccess: true,
-        reason: "unlimited",
-        message: "Bạn có quyền đọc vô hạn từ mã redeem",
-      });
-    }
-
     // Kiểm tra đã mua chưa
     const purchased = await prisma.purchasedPost.findUnique({
       where: {

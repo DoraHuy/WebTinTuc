@@ -47,7 +47,11 @@ export default function ApprovedPostsPage() {
             const response = await fetch("/api/auth/me");
             if (response.ok) {
                 const data = await response.json();
-                setUserId(data.user.id);
+                if (data.authenticated && data.user) {
+                    setUserId(data.user.userId);
+                } else {
+                    window.location.href = "/login";
+                }
             } else {
                 window.location.href = "/login";
             }
@@ -102,8 +106,8 @@ export default function ApprovedPostsPage() {
 
             <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
                 <p className="text-sm text-blue-900 dark:text-blue-100">
-                    💡 <strong>Lưu ý:</strong> Tất cả bài viết đã duyệt (FREE hoặc PREMIUM) của bạn đều có thể đọc không giới hạn. 
-                    Bài FREE sẽ nhận được mã code để đọc các bài premium khác!
+                    💡 <strong>Lưu ý:</strong> Mỗi bài viết đã duyệt sẽ nhận được 1 mã code để mở bài đó. 
+                    Mã chỉ dùng được 1 lần duy nhất!
                 </p>
             </div>
 
@@ -171,29 +175,29 @@ export default function ApprovedPostsPage() {
                                     </div>
                                 )}
 
-                                {!post.isPremium && post.redeemCode && (
-                                    <div className="mb-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 rounded-lg border-2 border-purple-200 dark:border-purple-700">
+                                {post.redeemCode && (
+                                    <div className="mb-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 rounded-lg border-2 border-green-200 dark:border-green-700">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-xs font-semibold text-purple-700 dark:text-purple-300">
-                                                🎁 MÃ ĐỌC VÔ HẠN
+                                            <span className="text-xs font-semibold text-green-700 dark:text-green-300">
+                                                🎁 MÃ MỞ BÀI NÀY
                                             </span>
-                                            <span className="text-xs text-purple-600 dark:text-purple-400">
-                                                Tất cả bài premium
+                                            <span className="text-xs text-green-600 dark:text-green-400">
+                                                Dùng 1 lần
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <code className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 rounded border border-purple-300 dark:border-purple-600 font-mono text-sm font-bold text-purple-900 dark:text-purple-200">
+                                            <code className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 rounded border border-green-300 dark:border-green-600 font-mono text-sm font-bold text-green-900 dark:text-green-200">
                                                 {post.redeemCode.code}
                                             </code>
                                             <button
                                                 onClick={() => copyToClipboard(post.redeemCode!.code)}
-                                                className="px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition text-xs font-medium whitespace-nowrap"
+                                                className="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition text-xs font-medium whitespace-nowrap"
                                             >
                                                 {copiedCode === post.redeemCode.code ? "✓ Đã copy" : "📋 Copy"}
                                             </button>
                                         </div>
-                                        <p className="text-xs text-purple-600 dark:text-purple-400 mt-2">
-                                            💡 Dùng mã này tại <a href="/manage/redeem" className="underline font-semibold">trang redeem</a> để đọc mọi bài premium
+                                        <p className="text-xs text-green-600 dark:text-green-400 mt-2">
+                                            💡 Dùng mã này tại <a href="/manage/redeem" className="underline font-semibold">trang redeem</a> để mở bài viết này (chỉ 1 lần)
                                         </p>
                                     </div>
                                 )}

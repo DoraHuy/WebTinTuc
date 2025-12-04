@@ -44,11 +44,23 @@ export default function ManageRedeemCodesPage() {
   const [redeemMessage, setRedeemMessage] = useState<{ type: "success" | "error"; text: string; postId?: number } | null>(null);
 
   useEffect(() => {
-    // TODO: Get userId from session/auth
-    const mockUserId = 1; // Replace with actual auth
-    setUserId(mockUserId);
-    fetchCodes(mockUserId);
+    fetchUserId();
   }, []);
+
+  const fetchUserId = async () => {
+    try {
+      const response = await fetch("/api/auth/me");
+      const data = await response.json();
+      if (data.authenticated && data.user?.userId) {
+        setUserId(data.user.userId);
+        fetchCodes(data.user.userId);
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchCodes = async (uid: number) => {
     try {
@@ -202,12 +214,6 @@ export default function ManageRedeemCodesPage() {
             text: `✅ Nạp tiền thành công! Bạn đã nhận ${data.result.value.toLocaleString("vi-VN")} đ vào ví`,
           });
           setRedeemCode("");
-        } else if (data.result.type === "unlimited") {
-          setRedeemMessage({
-            type: "success",
-            text: `🎉 ${data.result.message} Bạn có thể đọc TẤT CẢ bài premium!`,
-          });
-          setRedeemCode("");
         }
       } else {
         setRedeemMessage({ type: "error", text: data.error || "Có lỗi xảy ra" });
@@ -223,8 +229,6 @@ export default function ManageRedeemCodesPage() {
     switch (type) {
       case "single_post":
         return "Bài viết đơn";
-      case "unlimited":
-        return "Không giới hạn";
       case "balance":
         return "Nạp tiền";
       default:
@@ -346,7 +350,6 @@ export default function ManageRedeemCodesPage() {
                 >
                   <option value="single_post">Bài viết đơn</option>
                   <option value="balance">Nạp tiền</option>
-                  <option value="unlimited">Không giới hạn</option>
                 </select>
               </div>
               <div>

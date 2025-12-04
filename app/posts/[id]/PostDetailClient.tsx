@@ -62,7 +62,13 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
         return;
       }
       const userData = await authRes.json();
-      const userId = userData.id;
+      const userId = userData?.user?.userId;
+      if (!userId) {
+        setHasAccess(false);
+        setShowPremium(true);
+        setCheckingAccess(false);
+        return;
+      }
       const res = await fetch(`/api/purchased?userId=${userId}&postId=${post.id}`);
       if (res.ok) {
         const data = await res.json();
@@ -160,11 +166,16 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
 
     try {
       const userData = await checkAuth.json();
-      const userId = userData.id;
+      const userId = userData?.user?.userId;
+      if (!userId) {
+        setRedeemMessage({ type: 'error', text: 'Không xác định được người dùng' });
+        setRedeemLoading(false);
+        return;
+      }
       const res = await fetch('/api/redeem', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, code: redeemCode.trim() }),
+        body: JSON.stringify({ userId: String(userId), code: redeemCode.trim().toUpperCase() }),
       });
 
       const data = await res.json();
