@@ -1,4 +1,4 @@
-import { Post, Author, Category, Tag, TopAuthor, TrendingPost } from '@/lib/types/Homepage';
+import { Post, Author, Category, Tag, TopAuthor, TrendingPost } from '@/types/Homepage';
 import { prisma } from '@/lib/prisma';
 
 export async function getHomepageData() {

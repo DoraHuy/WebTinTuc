@@ -1,4 +1,4 @@
-import { Post } from '@/lib/types/Homepage';
+import { Post } from '@/types/Homepage';
 
 const homepageDataJson = require('../../public/data/homepage-data.json');
 

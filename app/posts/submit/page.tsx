@@ -1,21 +1,43 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+interface Category {
+    id: number;
+    tenDanhMuc: string;
+}
+
 export default function SubmitPostPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [formData, setFormData] = useState({
         tieuDe: "",
         noiDung: "",
         hinhAnh: "",
         isPremium: false,
+        maDanhMuc: 0,
     });
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await fetch("/api/categories");
+                const data = await res.json();
+                if (data.categories) {
+                    setCategories(data.categories);
+                }
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -103,15 +125,40 @@ export default function SubmitPostPage() {
                 </div>
 
                 <div>
-                    <Label htmlFor="hinhAnh">Đường dẫn hình ảnh (tùy chọn)</Label>
+                    <Label htmlFor="maDanhMuc">Danh mục *</Label>
+                    <select
+                        id="maDanhMuc"
+                        required
+                        value={formData.maDanhMuc}
+                        onChange={(e) => setFormData({ ...formData, maDanhMuc: parseInt(e.target.value) })}
+                        className="mt-2 w-full p-3 border rounded-md bg-white dark:bg-gray-900 dark:border-gray-700"
+                    >
+                        <option value={0}>-- Chọn danh mục --</option>
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                                {cat.tenDanhMuc}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                        <Label htmlFor="hinhAnh">Link ảnh minh họa *</Label>
+                        <span className="text-xs text-muted-foreground">Dán URL ảnh (https)</span>
+                    </div>
                     <Input
                         id="hinhAnh"
-                        type="text"
+                        type="url"
+                        required
                         value={formData.hinhAnh}
                         onChange={(e) => setFormData({ ...formData, hinhAnh: e.target.value })}
-                        placeholder="/images/my-image.jpg"
-                        className="mt-2"
+                        placeholder="https://source.unsplash.com/1200x800/?technology,news"
+                        className="mt-1"
                     />
+                    <p className="text-xs text-muted-foreground">
+                        Nếu bạn để trống, hệ thống sẽ tự chèn ảnh công nghệ từ Unsplash.
+                    </p>
                 </div>
 
                 <div className="flex items-center space-x-2">

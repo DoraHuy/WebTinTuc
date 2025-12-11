@@ -1,6 +1,6 @@
 import { TopAuthors } from './TopAuthors';
 import { TrendingPosts } from './TrendingPosts';
-import { TopAuthor, TrendingPost } from '@/lib/types/Homepage';
+import { TopAuthor, TrendingPost } from '@/types/Homepage';
 
 interface SidebarProps {
   topAuthors: TopAuthor[];

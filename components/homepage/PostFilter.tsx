@@ -1,6 +1,6 @@
 'use client';
 
-import { FilterOptions } from '@/lib/types/Homepage';
+import { FilterOptions } from '@/types/Homepage';
 import { Filter, SlidersHorizontal, Crown, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -34,7 +34,7 @@ export function PostFilter({ filters, onFilterChange }: PostFilterProps) {
                 sortBy: e.target.value as FilterOptions['sortBy'],
               })
             }
-            className="px-4 py-2 rounded-lg border bg-background text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-4 py-2 rounded-xl border border-white/15 bg-white/5 backdrop-blur text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/60 shadow-inner shadow-white/5"
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -47,23 +47,23 @@ export function PostFilter({ filters, onFilterChange }: PostFilterProps) {
         {/* Filter Toggle Button */}
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg border font-medium text-sm transition-colors ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-semibold transition-all shadow-[0_12px_40px_-26px_rgba(0,0,0,0.9)] ${
             hasActiveFilters
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-background hover:bg-muted'
+              ? 'bg-linear-to-r from-primary to-secondary text-primary-foreground border-white/20'
+              : 'bg-white/5 hover:bg-white/10 text-foreground/90 border-white/10'
           }`}
         >
           <SlidersHorizontal className="w-4 h-4" />
           Bộ lọc
           {hasActiveFilters && (
-            <span className="w-2 h-2 rounded-full bg-white"></span>
+            <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_0_4px_rgba(255,255,255,0.12)]"></span>
           )}
         </button>
       </div>
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="mt-4 p-4 rounded-lg border bg-card space-y-4">
+        <div className="mt-4 p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl space-y-4 shadow-[0_24px_70px_-60px_rgba(0,0,0,0.95)]">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold flex items-center gap-2">
               <Filter className="w-4 h-4" />
@@ -88,10 +88,10 @@ export function PostFilter({ filters, onFilterChange }: PostFilterProps) {
                     isPremium: undefined,
                   })
                 }
-                className={`flex-1 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-2 rounded-xl border text-sm font-semibold transition-all ${
                   filters.isPremium === undefined
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-background hover:bg-muted'
+                    ? 'bg-linear-to-r from-primary to-secondary text-primary-foreground border-white/20 shadow-[0_12px_40px_-26px_rgba(0,0,0,0.9)]'
+                    : 'bg-white/5 hover:bg-white/10 text-foreground/90 border-white/10'
                 }`}
               >
                 Tất cả
@@ -103,10 +103,10 @@ export function PostFilter({ filters, onFilterChange }: PostFilterProps) {
                     isPremium: false,
                   })
                 }
-                className={`flex-1 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-2 rounded-xl border text-sm font-semibold transition-all ${
                   filters.isPremium === false
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-background hover:bg-muted'
+                    ? 'bg-linear-to-r from-primary to-secondary text-primary-foreground border-white/20 shadow-[0_12px_40px_-26px_rgba(0,0,0,0.9)]'
+                    : 'bg-white/5 hover:bg-white/10 text-foreground/90 border-white/10'
                 }`}
               >
                 Miễn phí
@@ -118,10 +118,10 @@ export function PostFilter({ filters, onFilterChange }: PostFilterProps) {
                     isPremium: true,
                   })
                 }
-                className={`flex-1 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-2 rounded-xl border text-sm font-semibold transition-all ${
                   filters.isPremium === true
-                    ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white'
-                    : 'bg-background hover:bg-muted'
+                    ? 'bg-linear-to-r from-amber-400 to-amber-500 text-white border-white/20 shadow-[0_12px_40px_-26px_rgba(0,0,0,0.9)]'
+                    : 'bg-white/5 hover:bg-white/10 text-foreground/90 border-white/10'
                 }`}
               >
                 <Crown className="w-4 h-4 inline mr-1" />
@@ -138,7 +138,7 @@ export function PostFilter({ filters, onFilterChange }: PostFilterProps) {
                   sortBy: 'latest',
                 })
               }
-              className="w-full px-4 py-2 rounded-lg border bg-muted hover:bg-muted/80 text-sm font-medium transition-colors"
+              className="w-full px-4 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-sm font-semibold transition-all"
             >
               Xóa tất cả bộ lọc
             </button>

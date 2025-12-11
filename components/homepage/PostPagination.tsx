@@ -1,6 +1,6 @@
 'use client';
 
-import { PaginationInfo } from '@/lib/types/Homepage';
+import { PaginationInfo } from '@/types/Homepage';
 import {
   Pagination,
   PaginationContent,

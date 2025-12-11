@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { User, FileText, Users, DollarSign, MessageSquare, Calendar, Award } from 'lucide-react';
+import { User, FileText, Users, DollarSign, MessageSquare, Calendar, Award, Star } from 'lucide-react';
+import { FollowButton } from '@/components/FollowButton';
 
 type Tab = 'posts' | 'followers' | 'donors' | 'commenters';
 
@@ -39,7 +40,7 @@ export default function AuthorProfileClient({ author, posts }: AuthorProfileClie
             <div className="text-center md:text-left flex-1">
               <h1 className="text-4xl font-bold mb-2">{author.tenNguoiDung}</h1>
               <p className="text-blue-100 mb-4">{author.bio || 'Tác giả TechNews'}</p>
-              <div className="flex flex-wrap gap-6 justify-center md:justify-start">
+              <div className="flex flex-wrap gap-6 justify-center md:justify-start mb-4">
                 <div className="flex items-center gap-2">
                   <FileText className="w-5 h-5" />
                   <span><strong>{author.totalPosts}</strong> bài viết</span>
@@ -49,6 +50,10 @@ export default function AuthorProfileClient({ author, posts }: AuthorProfileClie
                   <span><strong>{author.followers?.length || 0}</strong> người theo dõi</span>
                 </div>
                 <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5" />
+                  <span><strong>{author.averageRating || 0}</strong>/5 sao ({author.totalRatings || 0} đánh giá)</span>
+                </div>
+                <div className="flex items-center gap-2">
                   <Award className="w-5 h-5" />
                   <span><strong>{author.totalInteractions.toLocaleString()}</strong> tương tác</span>
                 </div>
@@ -56,6 +61,9 @@ export default function AuthorProfileClient({ author, posts }: AuthorProfileClie
                   <DollarSign className="w-5 h-5" />
                   <span><strong>{(author.totalRevenue / 1000000).toFixed(1)}M</strong> doanh thu</span>
                 </div>
+              </div>
+              <div>
+                <FollowButton authorId={author.id} />
               </div>
             </div>
           </div>
@@ -126,6 +134,11 @@ export default function AuthorProfileClient({ author, posts }: AuthorProfileClie
                     <span>👁 {post.viewCount?.toLocaleString()}</span>
                     <span>❤️ {post.likeCount?.toLocaleString()}</span>
                     <span>💬 {post.commentCount}</span>
+                    {post.ratings && post.ratings.length > 0 && (
+                      <span className="flex items-center gap-1">
+                        ⭐ {(post.ratings.reduce((sum: number, r: any) => sum + r.rating, 0) / post.ratings.length).toFixed(1)} ({post.ratings.length})
+                      </span>
+                    )}
                   </div>
                 </div>
               </Link>

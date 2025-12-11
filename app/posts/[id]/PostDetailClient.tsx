@@ -1,6 +1,6 @@
 'use client';
 
-import { Post } from '@/lib/types/Homepage';
+import { Post } from '@/types/Homepage';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
@@ -18,6 +18,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { PremiumOverlay } from '@/components/homepage/PremiumBadge';
 import BuyButton from '@/components/BuyButton';
+import { RatingComponent } from '@/components/RatingComponent';
 
 interface PostDetailClientProps {
   post: Post;
@@ -32,6 +33,10 @@ interface Comment {
 }
 
 export default function PostDetailClient({ post }: PostDetailClientProps) {
+  const seed = typeof post.id === 'number' ? post.id : post.tenTinTuc.length;
+  const fallbackImage = `https://picsum.photos/seed/${seed}/1200/800`;
+  const imageUrl = post.thumbnail && post.thumbnail.trim() !== '' ? post.thumbnail : fallbackImage;
+
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likeCount || 0);
@@ -82,20 +87,48 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
     }
   };
 
-  const handleLike = () => {
-    if (liked) {
-      setLiked(false);
-      setLikeCount(likeCount - 1);
-    } else {
-      setLiked(true);
-      setLikeCount(likeCount + 1);
+  const handleLike = async () => {
+    try {
+      const authRes = await fetch('/api/auth/me');
+      if (!authRes.ok) {
+        alert('Vui lòng đăng nhập để thích bài viết');
+        return;
+      }
+      const userData = await authRes.json();
+      const userId = userData?.user?.userId;
+      if (!userId) return;
+
+      if (liked) {
+        // Unlike
+        const res = await fetch(`/api/ratings?userId=${userId}&postId=${post.id}`, {
+          method: 'DELETE',
+        });
+        if (res.ok) {
+          setLiked(false);
+          setLikeCount(prev => Math.max(0, prev - 1));
+        }
+      } else {
+        // Like
+        const res = await fetch('/api/ratings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, postId: post.id, rating: 1 }),
+        });
+        if (res.ok) {
+          setLiked(true);
+          setLikeCount(prev => prev + 1);
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
     }
   };
 
   useEffect(() => {
-    // Load comments from API
+    // Load comments, bookmark, and rating from API
     const load = async () => {
       try {
+        // Load comments
         const res = await fetch(`/api/comments?postId=${post.id}`, { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
@@ -106,6 +139,31 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
             timestamp: new Date(c.ngayBinhLuan),
           }));
           setComments(mapped);
+        }
+
+        // Load bookmark and rating status
+        const authRes = await fetch('/api/auth/me');
+        if (authRes.ok) {
+          const userData = await authRes.json();
+          const userId = userData?.user?.userId;
+          if (userId) {
+            // Check bookmark
+            const bookmarkRes = await fetch(`/api/bookmarks?userId=${userId}&postId=${post.id}`);
+            if (bookmarkRes.ok) {
+              const bookmarkData = await bookmarkRes.json();
+              setBookmarked(bookmarkData.bookmarked);
+            }
+
+            // Check rating/like
+            const ratingRes = await fetch(`/api/ratings?userId=${userId}&postId=${post.id}`);
+            if (ratingRes.ok) {
+              const ratingData = await ratingRes.json();
+              setLiked(ratingData.rated);
+              if (ratingData.totalRatings) {
+                setLikeCount(ratingData.totalRatings);
+              }
+            }
+          }
         }
       } catch {}
     };
@@ -282,15 +340,13 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
         </div>
 
         {/* Featured Image */}
-        {post.thumbnail && (
-          <div className="mb-8 rounded-xl overflow-hidden">
-            <img
-              src={post.thumbnail}
-              alt={post.tenTinTuc}
-              className="w-full aspect-video object-cover"
-            />
-          </div>
-        )}
+        <div className="mb-8 rounded-xl overflow-hidden">
+          <img
+            src={imageUrl}
+            alt={post.tenTinTuc}
+            className="w-full aspect-video object-cover"
+          />
+        </div>
 
         {/* Summary */}
         {post.tomTat && (
@@ -460,7 +516,40 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
           </button>
 
           <button
-            onClick={() => setBookmarked(!bookmarked)}
+            onClick={async () => {
+              try {
+                const authRes = await fetch('/api/auth/me');
+                if (!authRes.ok) {
+                  alert('Vui lòng đăng nhập để lưu bài viết');
+                  return;
+                }
+                const userData = await authRes.json();
+                const userId = userData?.user?.userId;
+                if (!userId) return;
+
+                if (bookmarked) {
+                  // Remove bookmark
+                  const res = await fetch(`/api/bookmarks?userId=${userId}&postId=${post.id}`, {
+                    method: 'DELETE',
+                  });
+                  if (res.ok) {
+                    setBookmarked(false);
+                  }
+                } else {
+                  // Add bookmark
+                  const res = await fetch('/api/bookmarks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, postId: post.id }),
+                  });
+                  if (res.ok) {
+                    setBookmarked(true);
+                  }
+                }
+              } catch (error) {
+                console.error('Error toggling bookmark:', error);
+              }
+            }}
             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
               bookmarked
                 ? 'bg-primary text-primary-foreground'
@@ -475,6 +564,12 @@ export default function PostDetailClient({ post }: PostDetailClientProps) {
             <Share2 className="w-5 h-5" />
             <span>Chia sẻ</span>
           </button>
+        </div>
+
+        {/* Rating Section */}
+        <div className="mb-8 p-6 rounded-lg bg-muted/50 border">
+          <h3 className="text-lg font-semibold mb-4">Đánh giá bài viết</h3>
+          <RatingComponent postId={post.id} />
         </div>
 
         {/* Comments Section */}

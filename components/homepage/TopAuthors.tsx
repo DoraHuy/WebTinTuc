@@ -1,6 +1,6 @@
 'use client';
 
-import { TopAuthor, TopPeriod } from '@/lib/types/Homepage';
+import { TopAuthor, TopPeriod } from '@/types/Homepage';
 import { Crown, Medal, Award, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -53,42 +53,42 @@ export function TopAuthors({ authors, type }: TopAuthorsProps) {
   };
 
   return (
-    <div className="bg-card rounded-lg border p-4">
+    <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-4 shadow-[0_24px_70px_-60px_rgba(0,0,0,0.95)]">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-bold text-lg flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-primary" />
+          <TrendingUp className="w-5 h-5 text-primary drop-shadow" />
           {getTitle()}
         </h3>
       </div>
 
       {/* Period Selector */}
-      <div className="flex gap-1 mb-4 bg-muted p-1 rounded-lg">
+      <div className="flex gap-1 mb-4 bg-white/5 p-1 rounded-xl border border-white/10">
         <button
           onClick={() => setPeriod('week')}
-          className={`flex-1 px-3 py-1.5 text-xs font-medium rounded transition-colors ${
+          className={`flex-1 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
             period === 'week'
-              ? 'bg-background shadow-sm'
-              : 'hover:bg-background/50'
+              ? 'bg-linear-to-r from-primary to-secondary text-primary-foreground shadow-[0_10px_30px_-20px_rgba(0,0,0,0.8)]'
+              : 'hover:bg-white/10 text-foreground/80'
           }`}
         >
           Tuần
         </button>
         <button
           onClick={() => setPeriod('month')}
-          className={`flex-1 px-3 py-1.5 text-xs font-medium rounded transition-colors ${
+          className={`flex-1 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
             period === 'month'
-              ? 'bg-background shadow-sm'
-              : 'hover:bg-background/50'
+              ? 'bg-linear-to-r from-primary to-secondary text-primary-foreground shadow-[0_10px_30px_-20px_rgba(0,0,0,0.8)]'
+              : 'hover:bg-white/10 text-foreground/80'
           }`}
         >
           Tháng
         </button>
         <button
           onClick={() => setPeriod('all')}
-          className={`flex-1 px-3 py-1.5 text-xs font-medium rounded transition-colors ${
+          className={`flex-1 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
             period === 'all'
-              ? 'bg-background shadow-sm'
-              : 'hover:bg-background/50'
+              ? 'bg-linear-to-r from-primary to-secondary text-primary-foreground shadow-[0_10px_30px_-20px_rgba(0,0,0,0.8)]'
+              : 'hover:bg-white/10 text-foreground/80'
           }`}
         >
           Tất cả
@@ -101,14 +101,14 @@ export function TopAuthors({ authors, type }: TopAuthorsProps) {
           <Link
             key={author.id}
             href={`/author/${author.id}`}
-            className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+            className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/10 transition-all cursor-pointer border border-transparent hover:border-white/10"
           >
-            <div className="flex-shrink-0">{getIcon(author.rank)}</div>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center font-bold text-sm flex-shrink-0">
+            <div className="shrink-0">{getIcon(author.rank)}</div>
+            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/15 flex items-center justify-center font-bold text-sm shrink-0">
               {author.tenNguoiDung[0]}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm truncate">{author.tenNguoiDung}</p>
+              <p className="font-semibold text-sm truncate">{author.tenNguoiDung}</p>
               <p className="text-xs text-muted-foreground">
                 {author.stats.toLocaleString()} {getStatLabel()}
               </p>

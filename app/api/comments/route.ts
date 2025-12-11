@@ -20,23 +20,29 @@ export async function GET(req: NextRequest) {
 
 // POST: body { postId: number, content: string }
 export async function POST(req: NextRequest) {
-  const session = getSession();
-  if (!session) return NextResponse.json({ error: "Chưa đăng nhập" }, { status: 401 });
-  const body = await req.json();
-  const { postId, content } = body || {};
-  if (!postId || typeof postId !== "number" || !content || typeof content !== "string") {
-    return NextResponse.json({ error: "Thiếu dữ liệu" }, { status: 400 });
+  try {
+    const session = await getSession();
+    if (!session) return NextResponse.json({ error: "Chưa đăng nhập" }, { status: 401 });
+    
+    const body = await req.json();
+    const { postId, content } = body || {};
+    if (!postId || typeof postId !== "number" || !content || typeof content !== "string") {
+      return NextResponse.json({ error: "Thiếu dữ liệu" }, { status: 400 });
+    }
+
+    const created = await prisma.binhLuans.create({
+      data: {
+        noiDungBinhLuan: content,
+        maNguoiDung: session.userId,
+        maTinTuc: postId,
+        trangThaiAnDanh: false,
+        tenNguoiBinhLuan: undefined,
+      },
+    });
+
+    return NextResponse.json({ comment: created }, { status: 201 });
+  } catch (error) {
+    console.error('Error creating comment:', error);
+    return NextResponse.json({ error: "Lỗi khi tạo bình luận" }, { status: 500 });
   }
-
-  const created = await prisma.binhLuans.create({
-    data: {
-      noiDungBinhLuan: content,
-      maNguoiDung: session.userId,
-      maTinTuc: postId,
-      trangThaiAnDanh: false,
-      tenNguoiBinhLuan: undefined,
-    },
-  });
-
-  return NextResponse.json({ comment: created }, { status: 201 });
 }

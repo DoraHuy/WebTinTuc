@@ -1,4 +1,4 @@
-import { Post } from '@/lib/types/Homepage';
+import { Post } from '@/types/Homepage';
 import { notFound } from 'next/navigation';
 import { getPostById } from '@/lib/data/homepage-data-mysql';
 import PostDetailClient from './PostDetailClient';

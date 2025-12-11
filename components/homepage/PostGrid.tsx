@@ -1,4 +1,4 @@
-import { Post } from '@/lib/types/Homepage';
+import { Post } from '@/types/Homepage';
 import { PostCard } from './PostCard';
 
 interface PostGridProps {
@@ -9,7 +9,7 @@ interface PostGridProps {
 export function PostGrid({ posts, title }: PostGridProps) {
   if (posts.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12 rounded-2xl border border-white/10 bg-white/5 backdrop-blur">
         <p className="text-muted-foreground">Không có bài viết nào</p>
       </div>
     );
@@ -18,7 +18,7 @@ export function PostGrid({ posts, title }: PostGridProps) {
   return (
     <section className="mb-8">
       {title && <h2 className="text-2xl font-bold mb-6">{title}</h2>}
-      <div className="grid gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}

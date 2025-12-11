@@ -74,25 +74,25 @@ export default function UsersClient({ users, roles }: Props) {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Quản lý người dùng</h1>
+    <div className="p-8 bg-white text-black">
+      <h1 className="text-5xl font-bold mb-6 border-b pb-4 text-black">Quản lý người dùng</h1>
       {message && (
-        <div className="mb-4 p-3 rounded-lg bg-muted border text-sm">
+        <div className="mb-6 p-5 rounded-xl bg-blue-50 border-2 border-blue-200 text-lg font-bold text-black">
           {message}
         </div>
       )}
-      <div className="rounded-lg border overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-muted">
+      <div className="rounded-xl border-2 border-gray-300 overflow-hidden shadow-lg bg-white">
+        <table className="w-full bg-white">
+          <thead className="bg-gray-100">
             <tr>
-              <th className="text-left p-3">ID</th>
-              <th className="text-left p-3">Tên</th>
-              <th className="text-left p-3">Email</th>
-              <th className="text-left p-3">Vai trò</th>
-              <th className="text-left p-3">Số dư ví</th>
-              <th className="text-left p-3">Đã mua</th>
-              <th className="text-left p-3">Đã gửi</th>
-              <th className="text-left p-3">Hành động</th>
+              <th className="text-left p-5 font-bold text-lg text-black">ID</th>
+              <th className="text-left p-5 font-bold text-lg text-black">Tên</th>
+              <th className="text-left p-5 font-bold text-lg text-black">Email</th>
+              <th className="text-left p-5 font-bold text-lg text-black">Vai trò</th>
+              <th className="text-left p-5 font-bold text-lg text-black">Số dư ví</th>
+              <th className="text-left p-5 font-bold text-lg text-black">Đã mua</th>
+              <th className="text-left p-5 font-bold text-lg text-black">Đã gửi</th>
+              <th className="text-left p-5 font-bold text-lg text-black">Hành động</th>
             </tr>
           </thead>
           <tbody>
@@ -130,57 +130,60 @@ function UserRow({
   const [selectedRoles, setSelectedRoles] = useState<number[]>(user.vaiTroIds);
 
   return (
-    <tr className="border-t">
-      <td className="p-3">{user.id}</td>
-      <td className="p-3">{user.tenNguoiDung}</td>
-      <td className="p-3">{user.email}</td>
-      <td className="p-3">{user.vaiTro}</td>
-      <td className="p-3">{user.soDu.toLocaleString()}đ</td>
-      <td className="p-3">{user.purchasedCount}</td>
-      <td className="p-3">{user.submissionsCount}</td>
-      <td className="p-3">
-        <div className="flex items-center gap-2 mb-2">
-          <input
-            type="number"
-            value={soDu}
-            onChange={(e) => setSoDu(Number(e.target.value))}
-            className="w-28 px-2 py-1 border rounded dark:bg-gray-800 dark:border-gray-700"
-            disabled={loading}
-          />
+    <tr className="border-t border-gray-200 hover:bg-gray-50 transition-all bg-white">
+      <td className="p-5 font-bold text-lg text-black">{user.id}</td>
+      <td className="p-5 font-bold text-lg text-black">{user.tenNguoiDung}</td>
+      <td className="p-5 text-lg text-black">{user.email}</td>
+      <td className="p-5 text-lg text-black">{user.vaiTro}</td>
+      <td className="p-5 font-bold text-lg text-green-600">{user.soDu.toLocaleString()}đ</td>
+      <td className="p-5 text-lg font-bold text-black">{user.purchasedCount}</td>
+      <td className="p-5 text-lg font-bold text-black">{user.submissionsCount}</td>
+      <td className="p-5">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              value={soDu}
+              onChange={(e) => setSoDu(Number(e.target.value))}
+              className="w-40 px-4 py-3 text-lg font-bold border-2 border-gray-300 rounded-lg bg-white text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              disabled={loading}
+            />
+            <button
+              onClick={() => onUpdateWallet(user.id, soDu)}
+              disabled={loading}
+              className="px-6 py-3 text-lg font-bold border-2 border-blue-600 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg"
+            >
+              {loading ? 'Loading...' : 'Cập nhật ví'}
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
+            {roles.map((r) => (
+              <label key={r.id} className="inline-flex items-center gap-2 text-lg font-bold cursor-pointer hover:text-blue-600 transition-colors text-black">
+                <input
+                  type="checkbox"
+                  checked={selectedRoles.includes(r.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedRoles([...selectedRoles, r.id]);
+                    } else {
+                      setSelectedRoles(selectedRoles.filter((id) => id !== r.id));
+                    }
+                  }}
+                  disabled={loading}
+                  className="w-5 h-5 cursor-pointer"
+                />
+                <span>{r.tenVaiTro}</span>
+              </label>
+            ))}
+          </div>
           <button
-            onClick={() => onUpdateWallet(user.id, soDu)}
+            onClick={() => onUpdateRoles(user.id, selectedRoles)}
             disabled={loading}
-            className="px-3 py-1 border rounded bg-card hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 text-lg font-bold border-2 border-blue-600 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg"
           >
-            {loading ? '...' : 'Cập nhật ví'}
+            {loading ? 'Loading...' : 'Cập nhật vai trò'}
           </button>
         </div>
-        <div className="flex flex-wrap gap-2 mb-2">
-          {roles.map((r) => (
-            <label key={r.id} className="inline-flex items-center gap-1 text-xs">
-              <input
-                type="checkbox"
-                checked={selectedRoles.includes(r.id)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedRoles([...selectedRoles, r.id]);
-                  } else {
-                    setSelectedRoles(selectedRoles.filter((id) => id !== r.id));
-                  }
-                }}
-                disabled={loading}
-              />
-              <span>{r.tenVaiTro}</span>
-            </label>
-          ))}
-        </div>
-        <button
-          onClick={() => onUpdateRoles(user.id, selectedRoles)}
-          disabled={loading}
-          className="px-3 py-1 border rounded bg-card hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? '...' : 'Cập nhật vai trò'}
-        </button>
       </td>
     </tr>
   );

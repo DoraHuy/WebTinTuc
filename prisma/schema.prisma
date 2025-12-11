@@ -11,7 +11,6 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 
@@ -47,6 +46,10 @@ model NguoiDungs {
   redeemCodes     RedeemCode[]
   redeemUsages    RedeemCodeUsage[]
   postSubmissions PostSubmission[]
+  bookmarks       Bookmark[]
+  ratings         Rating[]
+  followerOf      Follow[] @relation("FollowerOf")
+  author          Follow[] @relation("Author")
 
   @@map("nguoidungs")
 }
@@ -101,6 +104,7 @@ model DanhMucs {
   parent          DanhMucs?  @relation("DanhMucCon", fields: [parentId], references: [id])
   children        DanhMucs[] @relation("DanhMucCon")
   tinTuc          TinTucs[]
+  postSubmissions PostSubmission[]
 
   @@map("danhmucs")
 }
@@ -135,6 +139,8 @@ model TinTucs {
   cart             Cart[]
   orderItems       OrderItem[]
   purchasedPosts   PurchasedPost[]
+  bookmarks        Bookmark[]
+  ratings          Rating[]
 }
 
 model BinhLuans {
@@ -289,6 +295,8 @@ model PostSubmission {
   isPremium       Boolean      @default(false)
   maNguoiDung     Int
   nguoiDung       NguoiDungs   @relation(fields: [maNguoiDung], references: [id])
+  maDanhMuc       Int?
+  danhMuc         DanhMucs?    @relation(fields: [maDanhMuc], references: [id])
   trangThai       String       @default("pending") // pending, approved, rejected
   maCodeTao       Int?         @unique
   redeemCode      RedeemCode?  @relation("PostSubmissionCode", fields: [maCodeTao], references: [id])
@@ -296,4 +304,40 @@ model PostSubmission {
   ngayDuyet       DateTime?
   nguoiDuyet      Int?
   ghiChu          String?
+}
+
+// Bookmark - Lưu trữ yêu thích bài viết
+model Bookmark {
+  id          Int        @id @default(autoincrement())
+  maNguoiDung Int
+  nguoiDung   NguoiDungs @relation(fields: [maNguoiDung], references: [id])
+  maTinTuc    Int
+  tinTuc      TinTucs    @relation(fields: [maTinTuc], references: [id])
+  ngayLuu     DateTime   @default(now())
+  
+  @@unique([maNguoiDung, maTinTuc])
+}
+
+// Rating - Đánh giá bài viết (like/rating)
+model Rating {
+  id          Int        @id @default(autoincrement())
+  maNguoiDung Int
+  nguoiDung   NguoiDungs @relation(fields: [maNguoiDung], references: [id])
+  maTinTuc    Int
+  tinTuc      TinTucs    @relation(fields: [maTinTuc], references: [id])
+  rating      Int        @default(1) // 1-5 stars hoặc chỉ dùng 1 cho "like"
+  ngayDanhGia DateTime   @default(now())
+  
+  @@unique([maNguoiDung, maTinTuc])
+}
+// Follow - Theo dõi tác giả
+model Follow {
+  id              Int        @id @default(autoincrement())
+  maNguoiDungTheoDoi Int
+  nguoiDungTheoDoi NguoiDungs @relation("FollowerOf", fields: [maNguoiDungTheoDoi], references: [id])
+  maNguoiDungTacGia Int
+  nguoiDungTacGia  NguoiDungs @relation("Author", fields: [maNguoiDungTacGia], references: [id])
+  ngayTheo         DateTime   @default(now())
+  
+  @@unique([maNguoiDungTheoDoi, maNguoiDungTacGia])
 }

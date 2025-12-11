@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { tieuDe, noiDung, hinhAnh, isPremium, maNguoiDung } = body;
+        const { tieuDe, noiDung, hinhAnh, isPremium, maNguoiDung, maDanhMuc } = body;
 
         if (!tieuDe || !noiDung || !maNguoiDung) {
             return NextResponse.json(
@@ -15,13 +15,19 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        const seed = Math.abs(tieuDe.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0));
+        const imageUrl = hinhAnh && hinhAnh.trim() !== ""
+            ? hinhAnh.trim()
+            : `https://picsum.photos/seed/${seed}/1200/800`;
+
         const postSubmission = await prisma.postSubmission.create({
             data: {
                 tieuDe,
                 noiDung,
-                hinhAnh: hinhAnh || null,
+                hinhAnh: imageUrl,
                 isPremium: isPremium || false,
                 maNguoiDung,
+                maDanhMuc: maDanhMuc && maDanhMuc > 0 ? maDanhMuc : null,
                 trangThai: "pending",
             },
         });
