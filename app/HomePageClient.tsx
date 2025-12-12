@@ -226,15 +226,16 @@ export default function HomePageClient({
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <form action="/api/auth/logout" method="POST" className="w-full">
-                        <button
-                          type="submit"
-                          className="w-full flex items-center gap-2 text-destructive cursor-pointer"
-                        >
-                          <User className="w-4 h-4" />
-                          Đăng xuất
-                        </button>
-                      </form>
+                      <button
+                        onClick={async () => {
+                          await fetch('/api/auth/logout', { method: 'POST' });
+                          window.location.href = '/login';
+                        }}
+                        className="w-full flex items-center gap-2 text-destructive cursor-pointer"
+                      >
+                        <User className="w-4 h-4" />
+                        Đăng xuất
+                      </button>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

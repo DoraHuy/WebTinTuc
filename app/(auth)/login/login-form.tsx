@@ -3,6 +3,7 @@ import { z } from "zod"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -105,6 +106,15 @@ const LoginForm = () => {
                 >
                     {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
                 </Button>
+
+                <div className="flex items-center justify-between text-sm">
+                    <Link href="/register" className="text-blue-500 hover:underline">
+                        Chưa có tài khoản?
+                    </Link>
+                    <Link href="/forgot-password" className="text-blue-500 hover:underline">
+                        Quên mật khẩu?
+                    </Link>
+                </div>
             </form>
         </Form>
     )
